@@ -1,9 +1,17 @@
 import axios from "axios";
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import {
+  ChangeEventHandler,
+  FormEventHandler,
+  useContext,
+  useState,
+} from "react";
 import ProgressBar from "./ProgressBar";
+import { ImageContext } from "../context/ImageProvider";
+import { toast } from "react-toastify";
 import "./UploadForm.css";
 
 export default function UploadForm() {
+  const [images, setImages] = useContext(ImageContext);
   const defaultFileName = "이미지 파일을 업로드 해주세요.";
   const [file, setFile] = useState<File | null>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
@@ -37,15 +45,17 @@ export default function UploadForm() {
           setPercent(Math.round((100 * e.loaded) / e.total!));
         },
       });
-      console.log(res);
-      // alert("성공!");
+      setImages([...images, res.data]);
+      toast.success("이미지가 성공적으로 업로드되었습니다!", {
+        autoClose: 3000,
+      });
       setTimeout(() => {
         setPercent(0);
         setFileName(defaultFileName);
         setImgSrc(null);
       }, 3000);
     } catch (err) {
-      alert("실패");
+      toast.error("이미지 업로드에 실패했습니다.");
       setPercent(0);
       setFileName(defaultFileName);
       setImgSrc(null);
