@@ -29,3 +29,17 @@
   height: 40px;
   cursor: pointer;
 }
+
+.image-preview {
+  width: 0%;
+  opacity: 0;
+  display: block;
+  margin: 0 auto 20px auto;
+  border-radius: 10px;
+  border: 5px solid gray;
+}
+
+.image-preview-show {
+  width: 75%;
+  opacity: 1;
+}

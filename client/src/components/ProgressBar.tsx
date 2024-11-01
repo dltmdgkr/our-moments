@@ -1,3 +1,9 @@
+import "./ProgressBar.css";
+
 export default function ProgressBar({ percent }: { percent: number }) {
-  return <div>{percent}</div>;
+  return (
+    <div className="progress-bar-boundary">
+      <div style={{ width: `${percent}%` }}>{percent}%</div>
+    </div>
+  );
 }

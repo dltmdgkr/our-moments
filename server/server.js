@@ -1,7 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
 const { v4: uuid } = require("uuid");
 const mime = require("mime-types");
+const mongoose = require("mongoose");
+const Image = require("./models/Image");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "./uploads"),
@@ -12,7 +15,8 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (["image/png", "image/jpeg"].includes(file.mimetype)) cb(null, true);
+    if (["image/png", "image/jpeg", "image/webp"].includes(file.mimetype))
+      cb(null, true);
     else cb(new Error("유효하지 않은 파일 형식 입니다."), false);
   },
   limits: {
@@ -23,11 +27,25 @@ const upload = multer({
 const app = express();
 const PORT = 8080;
 
-app.use("/uploads", express.static("uploads"));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected!!");
 
-app.post("/upload", upload.single("image"), (req, res) => {
-  console.log(req.file);
-  res.json(req.file);
-});
-
-app.listen(PORT, () => console.log("Express server listening on PORT " + PORT));
+    app.use("/uploads", express.static("uploads"));
+    app.post("/images", upload.single("image"), async (req, res) => {
+      const image = await new Image({
+        key: req.file.filename,
+        originalFileName: req.file.originalname,
+      }).save();
+      res.json(image);
+    });
+    app.get("/images", async (req, res) => {
+      const images = await Image.find();
+      res.json(images);
+    });
+    app.listen(PORT, () =>
+      console.log("✅ Express server listening on PORT " + PORT)
+    );
+  })
+  .catch((err) => console.error(err));
