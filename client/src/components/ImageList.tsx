@@ -16,7 +16,7 @@ export default function ImageList() {
   return (
     <div>
       <h3>Image List</h3>
-      {imgList}
+      {imgList.length > 0 ? imgList : "사진을 추가하여 갤러리를 완성해보세요!"}
     </div>
   );
 }
