@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthProvider";
 import axios from "axios";
 
 export default function NavBar() {
-  const { me, setMe } = useContext(AuthContext);
+  const { me, setMe, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const logoutHandler = async () => {
@@ -17,13 +17,18 @@ export default function NavBar() {
     }
   };
 
+  if (isLoading) return null;
+
   return (
     <>
       <Link to="/">
         <span>갤러리</span>
       </Link>
       {me ? (
-        <span onClick={logoutHandler} style={{ float: "right" }}>
+        <span
+          onClick={logoutHandler}
+          style={{ float: "right", cursor: "pointer" }}
+        >
           로그아웃
         </span>
       ) : (
