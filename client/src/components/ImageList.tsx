@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { ImageContext } from "../context/ImageProvider";
 
 export default function ImageList() {
-  const [images] = useContext(ImageContext);
+  const { images } = useContext(ImageContext);
 
   const imgList = images.map((image) => (
     <img

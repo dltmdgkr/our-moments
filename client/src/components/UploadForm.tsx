@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import "./UploadForm.css";
 
 export default function UploadForm() {
-  const [images, setImages] = useContext(ImageContext);
+  const { images, setImages } = useContext(ImageContext);
   const defaultFileName = "이미지 파일을 업로드 해주세요.";
   const [file, setFile] = useState<File | null>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);

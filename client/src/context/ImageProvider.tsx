@@ -1,13 +1,25 @@
 import axios from "axios";
-import { ReactNode, createContext, useEffect, useState } from "react";
-
-export const ImageContext = createContext<
-  [Image[], React.Dispatch<React.SetStateAction<Image[]>>]
->([[], () => {}]);
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useState,
+} from "react";
 
 export interface Image {
   key: string;
 }
+interface ImageContextType {
+  images: Image[];
+  setImages: Dispatch<SetStateAction<Image[]>>;
+}
+
+export const ImageContext = createContext<ImageContextType>({
+  images: [],
+  setImages: () => {},
+});
 
 export default function ImageProvider({ children }: { children: ReactNode }) {
   const [images, setImages] = useState<Image[]>([]);
@@ -20,7 +32,7 @@ export default function ImageProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ImageContext.Provider value={[images, setImages]}>
+    <ImageContext.Provider value={{ images, setImages }}>
       {children}
     </ImageContext.Provider>
   );

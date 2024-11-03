@@ -25,6 +25,7 @@ userRouter.post("/signup", async (req, res) => {
       message: "user signup!!",
       sessionId: session._id,
       name: user.name,
+      userId: user._id,
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -49,6 +50,7 @@ userRouter.patch("/login", async (req, res) => {
       message: "user validated!!",
       sessionId: session._id,
       name: user.name,
+      userId: user._id,
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
