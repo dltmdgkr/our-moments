@@ -11,12 +11,14 @@ import { toast } from "react-toastify";
 import "./UploadForm.css";
 
 export default function UploadForm() {
-  const { images, setImages } = useContext(ImageContext);
+  const { images, setImages, myPrivateImages, setMyPrivateImages } =
+    useContext(ImageContext);
   const defaultFileName = "이미지 파일을 업로드 해주세요.";
   const [file, setFile] = useState<File | null>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [fileName, setFileName] = useState(defaultFileName);
   const [percent, setPercent] = useState(0);
+  const [isPublic, setIsPublic] = useState(false);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     const files = e.target.files;
@@ -38,6 +40,7 @@ export default function UploadForm() {
     }
     const formData = new FormData();
     formData.append("image", file);
+    formData.append("public", isPublic.toString());
     try {
       const res = await axios.post("/images", formData, {
         headers: { "content-type": "multipart/form-data" },
@@ -45,10 +48,14 @@ export default function UploadForm() {
           setPercent(Math.round((100 * e.loaded) / e.total!));
         },
       });
-      setImages([...images, res.data]);
+
+      if (isPublic) setImages([...images, res.data]);
+      else setMyPrivateImages([...myPrivateImages, res.data]);
+
       toast.success("이미지가 성공적으로 업로드되었습니다!", {
         autoClose: 3000,
       });
+
       setTimeout(() => {
         setPercent(0);
         setFileName(defaultFileName);
@@ -82,6 +89,13 @@ export default function UploadForm() {
           onChange={imageSelectHandler}
         />
       </div>
+      <input
+        type="checkbox"
+        id="public-check"
+        checked={!isPublic}
+        onChange={() => setIsPublic((prev) => !prev)}
+      />
+      <label htmlFor="public-check">비공개</label>
       <button type="submit" className="submit-btn">
         제출
       </button>
