@@ -12,6 +12,7 @@ import { AuthContext } from "./AuthProvider";
 
 export interface Image {
   key: string;
+  _id: string;
 }
 interface ImageContextType {
   images: Image[];
@@ -53,7 +54,7 @@ export default function ImageProvider({ children }: { children: ReactNode }) {
           .catch((err) => console.error(err));
       } else {
         setMyPrivateImages([]);
-        setIsPublic(false);
+        setIsPublic(true);
       }
     }, 0);
   }, [me]);

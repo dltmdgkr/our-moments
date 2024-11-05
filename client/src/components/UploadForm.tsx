@@ -18,15 +18,19 @@ export default function UploadForm() {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [fileName, setFileName] = useState(defaultFileName);
   const [percent, setPercent] = useState(0);
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPublic, setIsPublic] = useState(true);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     const files = e.target.files;
+
     if (files && files.length > 0) {
       const imageFile = files[0];
+
       setFile(imageFile);
       setFileName(imageFile.name);
+
       const fileReader = new FileReader();
+
       fileReader.readAsDataURL(imageFile);
       fileReader.onload = (e) => setImgSrc(e.target?.result as string);
     }
@@ -34,13 +38,17 @@ export default function UploadForm() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
     if (!file) {
       console.error("선택된 파일이 없습니다.");
       return;
     }
+
     const formData = new FormData();
+
     formData.append("image", file);
     formData.append("public", isPublic.toString());
+
     try {
       const res = await axios.post("/images", formData, {
         headers: { "content-type": "multipart/form-data" },

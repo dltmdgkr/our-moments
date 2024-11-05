@@ -5,6 +5,7 @@ import GalleryPage from "./pages/GalleryPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import NavBar from "./components/NavBar";
+import ImageDetailPage from "./pages/ImageDetailPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<GalleryPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/images/:imageId" element={<ImageDetailPage />} />
       </Routes>
     </div>
   );
