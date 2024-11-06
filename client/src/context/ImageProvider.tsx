@@ -13,6 +13,13 @@ import { AuthContext } from "./AuthProvider";
 export interface Image {
   key: string;
   _id: string;
+  likes: string[];
+  user: {
+    _id: string;
+    name: string;
+    username: string;
+  };
+  createdAt: Date;
 }
 interface ImageContextType {
   images: Image[];
