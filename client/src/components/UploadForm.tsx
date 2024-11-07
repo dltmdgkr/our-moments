@@ -10,43 +10,63 @@ import { ImageContext } from "../context/ImageProvider";
 import { toast } from "react-toastify";
 import "./UploadForm.css";
 
+interface Preview {
+  imgSrc: string | ArrayBuffer | null;
+  fileName: string;
+}
+
 export default function UploadForm() {
   const { images, setImages, myPrivateImages, setMyPrivateImages } =
     useContext(ImageContext);
-  const defaultFileName = "이미지 파일을 업로드 해주세요.";
-  const [file, setFile] = useState<File | null>(null);
-  const [imgSrc, setImgSrc] = useState<string | null>(null);
-  const [fileName, setFileName] = useState(defaultFileName);
+  const [files, setFiles] = useState<File[] | null>(null);
+  const [previews, setPreviews] = useState<Preview[]>([]);
   const [percent, setPercent] = useState(0);
   const [isPublic, setIsPublic] = useState(true);
 
-  const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const files = e.target.files;
+  const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
+    e
+  ) => {
+    const imageFiles = e.target.files;
 
-    if (files && files.length > 0) {
-      const imageFile = files[0];
+    if (imageFiles && imageFiles.length > 0) {
+      const imageArray = Array.from(imageFiles);
 
-      setFile(imageFile);
-      setFileName(imageFile.name);
+      setFiles(imageArray);
 
-      const fileReader = new FileReader();
+      const imagePreviews = await Promise.all(
+        [...imageArray].map(async (imageFile) => {
+          return new Promise<Preview>((resolve, reject) => {
+            try {
+              const fileReader = new FileReader();
 
-      fileReader.readAsDataURL(imageFile);
-      fileReader.onload = (e) => setImgSrc(e.target?.result as string);
+              fileReader.readAsDataURL(imageFile);
+              fileReader.onload = (e) =>
+                resolve({
+                  imgSrc: e.target?.result as string,
+                  fileName: imageFile.name,
+                });
+            } catch (err) {
+              reject(err);
+            }
+          });
+        })
+      );
+
+      setPreviews(imagePreviews);
     }
   };
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    if (!file) {
+    if (!files) {
       console.error("선택된 파일이 없습니다.");
       return;
     }
 
     const formData = new FormData();
 
-    formData.append("image", file);
+    for (let file of files) formData.append("image", file);
     formData.append("public", isPublic.toString());
 
     try {
@@ -57,8 +77,8 @@ export default function UploadForm() {
         },
       });
 
-      if (isPublic) setImages([...images, res.data]);
-      else setMyPrivateImages([...myPrivateImages, res.data]);
+      if (isPublic) setImages([...images, ...res.data]);
+      else setMyPrivateImages([...myPrivateImages, ...res.data]);
 
       toast.success("이미지가 성공적으로 업로드되었습니다!", {
         autoClose: 3000,
@@ -66,33 +86,44 @@ export default function UploadForm() {
 
       setTimeout(() => {
         setPercent(0);
-        setFileName(defaultFileName);
-        setImgSrc(null);
+        setPreviews([]);
       }, 3000);
     } catch (err) {
       toast.error("이미지 업로드에 실패했습니다.");
       setPercent(0);
-      setFileName(defaultFileName);
-      setImgSrc(null);
+      setPreviews([]);
       console.error(err);
     }
   };
 
+  const previewImages = previews.map((preview, index) => (
+    <img
+      key={index}
+      src={preview.imgSrc as string}
+      alt="사진첩 이미지 미리보기"
+      className={`image-preview ${preview.imgSrc && "image-preview-show"}`}
+      style={{ width: 200, height: 200, objectFit: "cover" }}
+    />
+  ));
+
+  const fileName =
+    previewImages.length === 0
+      ? "이미지 파일을 업로드 해주세요."
+      : previews.reduce(
+          (previous, current) => previous + `${current.fileName}, `,
+          ""
+        );
+
   return (
     <form onSubmit={onSubmit}>
-      {imgSrc ? (
-        <img
-          src={imgSrc}
-          alt="사진첩 이미지 미리보기"
-          className={`image-preview ${imgSrc && "image-preview-show"}`}
-        />
-      ) : null}
+      <div style={{ display: "flex", flexWrap: "wrap" }}>{previewImages}</div>
       <ProgressBar percent={percent} />
       <div className="file-dropper">
         {fileName}
         <input
           id="image"
           type="file"
+          multiple
           accept="image/*"
           onChange={imageSelectHandler}
         />
