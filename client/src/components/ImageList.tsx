@@ -1,14 +1,22 @@
 import { useContext } from "react";
 import { ImageContext } from "../context/ImageProvider";
-import "./ImageList.css";
 import { Link } from "react-router-dom";
+import "./ImageList.css";
 
 export default function ImageList() {
-  const { images, myPrivateImages, isPublic, setIsPublic } =
-    useContext(ImageContext);
+  const {
+    images,
+    myPrivateImages,
+    isPublic,
+    setIsPublic,
+    loadMoreImages,
+    imageLoading,
+  } = useContext(ImageContext);
 
-  const imgList = (isPublic ? images : myPrivateImages).map((image) => (
-    <Link key={image.key} to={`/images/${image._id}`}>
+  console.log({ isPublic });
+
+  const imgList = (isPublic ? images : myPrivateImages).map((image, index) => (
+    <Link key={`${image.key}-${index}`} to={`/images/${image._id}`}>
       <img
         src={`http://localhost:8080/uploads/${image.key}`}
         alt="업로드 이미지"
@@ -17,7 +25,7 @@ export default function ImageList() {
   ));
 
   return (
-    <div>
+    <>
       <h3 style={{ display: "inline-block", marginRight: 10 }}>
         Image List {isPublic ? "공개" : "개인"} 사진
       </h3>
@@ -29,6 +37,11 @@ export default function ImageList() {
           ? imgList
           : "사진을 추가하여 갤러리를 완성해보세요!"}
       </div>
-    </div>
+      {imageLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <button onClick={loadMoreImages}>Load More Images</button>
+      )}
+    </>
   );
 }

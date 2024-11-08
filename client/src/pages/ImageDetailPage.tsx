@@ -1,21 +1,33 @@
 import { useContext, useEffect, useState } from "react";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Image, ImageContext } from "../context/ImageProvider";
 import axios from "axios";
 import { AuthContext } from "../context/AuthProvider";
 import { toast } from "react-toastify";
 
 export default function ImageDetailPage() {
+  const navigate = useNavigate();
   const { imageId } = useParams();
   const { images, myPrivateImages, setImages, setMyPrivateImages } =
     useContext(ImageContext);
   const { me } = useContext(AuthContext);
   const [hasLiked, setHasLiked] = useState(false);
-  const navigate = useNavigate();
+  const [image, setImage] = useState<Image>();
 
-  const image =
-    images.find((image) => image._id === imageId) ||
-    myPrivateImages.find((image) => image._id === imageId);
+  useEffect(() => {
+    const img =
+      images.find((image) => image._id === imageId) ||
+      myPrivateImages.find((image) => image._id === imageId);
+    if (img) setImage(img);
+  }, [images, myPrivateImages, imageId]);
+
+  useEffect(() => {
+    if (image && image._id === imageId) return;
+    axios
+      .get(`/images/${imageId}`)
+      .then((result) => setImage(result.data))
+      .catch((err) => toast.error(err.response.data.message));
+  }, [imageId, image]);
 
   useEffect(() => {
     if (me && image && image.likes.includes(me.userId)) setHasLiked(true);
@@ -24,20 +36,48 @@ export default function ImageDetailPage() {
   if (!image) return <div>Loading...</div>;
 
   const updateImage = (images: Image[], image: Image) =>
-    [...images.filter((image) => image._id !== imageId), image].sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
+    [...images.filter((image) => image._id !== imageId), image].sort((a, b) => {
+      if (a._id < b._id) return 1;
+      else return -1;
+    });
 
+  // const likeHandler = async () => {
+  //   const result = await axios.patch(
+  //     `/images/${imageId}/${hasLiked ? "unlike" : "like"}`
+  //   );
+
+  //   if (result.data.public)
+  //     setImages((prevData) => updateImage(prevData, result.data));
+  //   setMyPrivateImages((prevData) => updateImage(prevData, result.data));
+
+  //   setHasLiked((prev) => !prev);
+  // };
   const likeHandler = async () => {
-    const result = await axios.patch(
-      `/images/${imageId}/${hasLiked ? "unlike" : "like"}`
-    );
+    try {
+      const result = await axios.patch(
+        `/images/${imageId}/${hasLiked ? "unlike" : "like"}`
+      );
+      const updatedImage = result.data;
 
-    if (result.data.public) setImages(updateImage(images, result.data));
-    else setMyPrivateImages(updateImage(myPrivateImages, result.data));
+      if (updatedImage.public) {
+        setImages((prevImages) => updateImage(prevImages, updatedImage));
+        if (!updatedImage.public)
+          setMyPrivateImages((prevImages) =>
+            prevImages.filter((img) => img._id !== updatedImage._id)
+          );
+      } else {
+        setMyPrivateImages((prevImages) =>
+          updateImage(prevImages, updatedImage)
+        );
+        setImages((prevImages) =>
+          prevImages.filter((img) => img._id !== updatedImage._id)
+        );
+      }
 
-    setHasLiked((prev) => !prev);
+      setHasLiked((prev) => !prev);
+    } catch (err) {
+      toast.error("Failed to update like status");
+    }
   };
 
   const deleteHandler = async () => {

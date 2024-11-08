@@ -16,8 +16,7 @@ interface Preview {
 }
 
 export default function UploadForm() {
-  const { images, setImages, myPrivateImages, setMyPrivateImages } =
-    useContext(ImageContext);
+  const { setImages, setMyPrivateImages } = useContext(ImageContext);
   const [files, setFiles] = useState<File[] | null>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [percent, setPercent] = useState(0);
@@ -77,8 +76,15 @@ export default function UploadForm() {
         },
       });
 
-      if (isPublic) setImages([...images, ...res.data]);
-      else setMyPrivateImages([...myPrivateImages, ...res.data]);
+      // if (isPublic) setImages([...res.data, ...images]);
+      // else setMyPrivateImages([...res.data, ...myPrivateImages]);
+      // if (isPublic) setImages((prevData) => [...res.data, ...prevData]);
+      // setMyPrivateImages((prevData) => [...res.data, ...prevData]);
+      if (isPublic) {
+        setImages((prevData) => [...res.data, ...prevData]);
+      } else {
+        setMyPrivateImages((prevData) => [...res.data, ...prevData]);
+      }
 
       toast.success("이미지가 성공적으로 업로드되었습니다!", {
         autoClose: 3000,

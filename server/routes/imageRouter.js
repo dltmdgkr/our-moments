@@ -37,8 +37,44 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
 });
 
 imageRouter.get("/", async (req, res) => {
-  const images = await Image.find({ public: true });
-  res.json(images);
+  try {
+    const { lastId } = req.query;
+
+    if (lastId && !mongoose.isValidObjectId(lastId))
+      throw new Error("invalid lastId");
+
+    const images = await Image.find(
+      lastId ? { public: true, _id: { $lt: lastId } } : { public: true }
+    )
+      .sort({ _id: -1 })
+      .limit(20);
+
+    res.json(images);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+imageRouter.get("/:imageId", async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    if (!mongoose.isValidObjectId(imageId))
+      throw new Error("올바르지 않는 imageId입니다.");
+
+    const image = await Image.findOne({ _id: imageId });
+
+    if (!image) throw new Error("해당 이미지는 존재하지 않습니다.");
+
+    // if (!image.public && (!req.user || req.user.id !== image.user.id))
+    //   throw new Error("권한이 없습니다.");
+
+    res.json(image);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
 });
 
 imageRouter.delete("/:imageId", async (req, res) => {

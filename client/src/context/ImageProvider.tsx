@@ -4,8 +4,10 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { AuthContext } from "./AuthProvider";
@@ -28,6 +30,8 @@ interface ImageContextType {
   setMyPrivateImages: Dispatch<SetStateAction<Image[]>>;
   isPublic: boolean;
   setIsPublic: Dispatch<SetStateAction<boolean>>;
+  loadMoreImages: () => void;
+  imageLoading: boolean;
 }
 
 export const ImageContext = createContext<ImageContextType>({
@@ -37,20 +41,35 @@ export const ImageContext = createContext<ImageContextType>({
   setMyPrivateImages: () => {},
   isPublic: false,
   setIsPublic: () => {},
+  loadMoreImages: () => {},
+  imageLoading: false,
 });
 
 export default function ImageProvider({ children }: { children: ReactNode }) {
   const [images, setImages] = useState<Image[]>([]);
   const [myPrivateImages, setMyPrivateImages] = useState<Image[]>([]);
   const [isPublic, setIsPublic] = useState(false);
+  const [imageUrl, setImageUrl] = useState("/images");
+  const [imageLoading, setImageLoading] = useState(false);
   const { me } = useContext(AuthContext);
+  const pastImageUrlRef = useRef<string>();
 
   useEffect(() => {
+    if (pastImageUrlRef.current === imageUrl) return;
+    setImageLoading(true);
     axios
-      .get("/images")
-      .then((result) => setImages(result.data))
-      .catch((err) => console.error(err));
-  }, []);
+      .get(imageUrl)
+      .then((result) =>
+        isPublic
+          ? setImages((prevData) => [...prevData, ...result.data])
+          : setMyPrivateImages((prevData) => [...prevData, ...result.data])
+      )
+      .catch((err) => console.error(err))
+      .finally(() => {
+        setImageLoading(false);
+        pastImageUrlRef.current = imageUrl;
+      });
+  }, [imageUrl, isPublic]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -66,6 +85,13 @@ export default function ImageProvider({ children }: { children: ReactNode }) {
     }, 0);
   }, [me]);
 
+  const lastImageId = images.length > 0 ? images[images.length - 1]._id : null;
+
+  const loadMoreImages = useCallback(() => {
+    if (imageLoading || !lastImageId) return;
+    setImageUrl(`${isPublic ? "" : "/users/me"}/images?lastId=${lastImageId}`);
+  }, [lastImageId, imageLoading, isPublic]);
+
   return (
     <ImageContext.Provider
       value={{
@@ -75,6 +101,8 @@ export default function ImageProvider({ children }: { children: ReactNode }) {
         setMyPrivateImages,
         isPublic,
         setIsPublic,
+        loadMoreImages,
+        imageLoading,
       }}
     >
       {children}
