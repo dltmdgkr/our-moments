@@ -98,7 +98,7 @@ export default function ImageDetailPage() {
       <h3>ImageDetailPage {imageId}</h3>
       <img
         style={{ width: "100%" }}
-        src={`http://localhost:8080/uploads/${image.key}`}
+        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
         alt={`image-${imageId}`}
       />
       <div>좋아요 {image.likes.length}</div>

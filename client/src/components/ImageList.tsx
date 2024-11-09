@@ -13,12 +13,10 @@ export default function ImageList() {
     imageLoading,
   } = useContext(ImageContext);
 
-  console.log({ isPublic });
-
   const imgList = (isPublic ? images : myPrivateImages).map((image, index) => (
     <Link key={`${image.key}-${index}`} to={`/images/${image._id}`}>
       <img
-        src={`http://localhost:8080/uploads/${image.key}`}
+        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
         alt="업로드 이미지"
       />
     </Link>
