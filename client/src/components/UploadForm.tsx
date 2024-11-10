@@ -57,29 +57,33 @@ export default function UploadForm() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-
-    if (!files) {
-      console.error("선택된 파일이 없습니다.");
-      return;
-    }
-
-    const formData = new FormData();
-
-    for (let file of files) formData.append("image", file);
-    formData.append("public", isPublic.toString());
-
+    if (!files) return;
     try {
-      const res = await axios.post("/images", formData, {
-        headers: { "content-type": "multipart/form-data" },
-        onUploadProgress: (e) => {
-          setPercent(Math.round((100 * e.loaded) / e.total!));
-        },
+      const presignedData = await axios.post("/images/presigned", {
+        contentTypes: [...files].map((file) => file.type),
       });
 
-      // if (isPublic) setImages([...res.data, ...images]);
-      // else setMyPrivateImages([...res.data, ...myPrivateImages]);
-      // if (isPublic) setImages((prevData) => [...res.data, ...prevData]);
-      // setMyPrivateImages((prevData) => [...res.data, ...prevData]);
+      await Promise.all(
+        [...files].map((file, index) => {
+          const { presigned } = presignedData.data[index];
+          const formData = new FormData();
+          for (const key in presigned.fields) {
+            formData.append(key, presigned.fields[key]);
+          }
+          formData.append("Content-Type", file.type);
+          formData.append("file", file);
+          return axios.post(presigned.url, formData);
+        })
+      );
+
+      const res = await axios.post("/images", {
+        images: [...files].map((file, index) => ({
+          imageKey: presignedData.data[index].imageKey,
+          originalname: file.name,
+        })),
+        public: isPublic,
+      });
+
       if (isPublic) {
         setImages((prevData) => [...res.data, ...prevData]);
       } else {
@@ -95,12 +99,55 @@ export default function UploadForm() {
         setPreviews([]);
       }, 3000);
     } catch (err) {
+      console.error(err);
       toast.error("이미지 업로드에 실패했습니다.");
       setPercent(0);
       setPreviews([]);
-      console.error(err);
     }
   };
+
+  // const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!files) {
+  //     console.error("선택된 파일이 없습니다.");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+
+  //   for (let file of files) formData.append("image", file);
+  //   formData.append("public", isPublic.toString());
+
+  //   try {
+  //     const res = await axios.post("/images", formData, {
+  //       headers: { "content-type": "multipart/form-data" },
+  //       onUploadProgress: (e) => {
+  //         setPercent(Math.round((100 * e.loaded) / e.total!));
+  //       },
+  //     });
+
+  //     if (isPublic) {
+  //       setImages((prevData) => [...res.data, ...prevData]);
+  //     } else {
+  //       setMyPrivateImages((prevData) => [...res.data, ...prevData]);
+  //     }
+
+  //     toast.success("이미지가 성공적으로 업로드되었습니다!", {
+  //       autoClose: 3000,
+  //     });
+
+  //     setTimeout(() => {
+  //       setPercent(0);
+  //       setPreviews([]);
+  //     }, 3000);
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("이미지 업로드에 실패했습니다.");
+  //     setPercent(0);
+  //     setPreviews([]);
+  //   }
+  // };
 
   const previewImages = previews.map((preview, index) => (
     <img
