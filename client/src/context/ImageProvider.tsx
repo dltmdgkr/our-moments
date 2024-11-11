@@ -21,6 +21,7 @@ export interface Image {
     name: string;
     username: string;
   };
+  public: boolean;
   createdAt: Date;
 }
 interface ImageContextType {

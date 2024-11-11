@@ -85,8 +85,17 @@ export default function ImageDetailPage() {
       if (!window.confirm("정말로 삭제하시겠습니까?")) return;
       const result = await axios.delete(`/images/${imageId}`);
       toast.success(result.data.message, { autoClose: 3000 });
-      setImages(images.filter((image) => image._id !== imageId));
-      setMyPrivateImages(images.filter((image) => image._id !== imageId));
+
+      if (image?.public) {
+        setImages((prevImages) =>
+          prevImages.filter((img) => img._id !== imageId)
+        );
+      } else {
+        setMyPrivateImages((prevImages) =>
+          prevImages.filter((img) => img._id !== imageId)
+        );
+      }
+
       navigate("/");
     } catch (err) {
       if (err instanceof Error) toast.error(err.message);

@@ -3,6 +3,7 @@ import {
   ChangeEventHandler,
   FormEventHandler,
   useContext,
+  useRef,
   useState,
 } from "react";
 import ProgressBar from "./ProgressBar";
@@ -21,6 +22,7 @@ export default function UploadForm() {
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [percent, setPercent] = useState<number[]>([]);
   const [isPublic, setIsPublic] = useState(true);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
     e
@@ -109,12 +111,14 @@ export default function UploadForm() {
       setTimeout(() => {
         setPercent([]);
         setPreviews([]);
+        if (inputRef.current) inputRef.current.value = "";
       }, 3000);
     } catch (err) {
       console.error(err);
       toast.error("이미지 업로드에 실패했습니다.");
       setPercent([]);
       setPreviews([]);
+      if (inputRef.current) inputRef.current.value = "";
     }
   };
 
@@ -195,6 +199,7 @@ export default function UploadForm() {
       <div className="file-dropper">
         {fileName}
         <input
+          ref={inputRef}
           id="image"
           type="file"
           multiple
