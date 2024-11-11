@@ -15,8 +15,11 @@ const mime = require("mime-types");
 imageRouter.post("/presigned", async (req, res) => {
   try {
     if (!req.user) throw new Error("권한이 없습니다.");
+
     const { contentTypes } = req.body;
+
     if (!Array.isArray(contentTypes)) throw new Error("invalid contentTypes");
+
     const presignedData = await Promise.all(
       contentTypes.map(async (contentType) => {
         const imageKey = `${uuid()}.${mime.extension(contentType)}`;

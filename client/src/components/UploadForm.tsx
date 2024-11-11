@@ -19,7 +19,7 @@ export default function UploadForm() {
   const { setImages, setMyPrivateImages } = useContext(ImageContext);
   const [files, setFiles] = useState<File[] | null>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
-  const [percent, setPercent] = useState(0);
+  const [percent, setPercent] = useState<number[]>([]);
   const [isPublic, setIsPublic] = useState(true);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
@@ -66,13 +66,25 @@ export default function UploadForm() {
       await Promise.all(
         [...files].map((file, index) => {
           const { presigned } = presignedData.data[index];
+
           const formData = new FormData();
+
           for (const key in presigned.fields) {
             formData.append(key, presigned.fields[key]);
           }
+
           formData.append("Content-Type", file.type);
           formData.append("file", file);
-          return axios.post(presigned.url, formData);
+
+          return axios.post(presigned.url, formData, {
+            onUploadProgress: (e) => {
+              setPercent((prevData) => {
+                const newData = [...prevData];
+                newData[index] = Math.round((100 * e.loaded) / e.total!);
+                return newData;
+              });
+            },
+          });
         })
       );
 
@@ -95,13 +107,13 @@ export default function UploadForm() {
       });
 
       setTimeout(() => {
-        setPercent(0);
+        setPercent([]);
         setPreviews([]);
       }, 3000);
     } catch (err) {
       console.error(err);
       toast.error("이미지 업로드에 실패했습니다.");
-      setPercent(0);
+      setPercent([]);
       setPreviews([]);
     }
   };
@@ -150,13 +162,15 @@ export default function UploadForm() {
   // };
 
   const previewImages = previews.map((preview, index) => (
-    <img
-      key={index}
-      src={preview.imgSrc as string}
-      alt="사진첩 이미지 미리보기"
-      className={`image-preview ${preview.imgSrc && "image-preview-show"}`}
-      style={{ width: 200, height: 200, objectFit: "cover" }}
-    />
+    <div key={index}>
+      <img
+        src={preview.imgSrc as string}
+        alt="사진첩 이미지 미리보기"
+        className={`image-preview ${preview.imgSrc && "image-preview-show"}`}
+        style={{ width: 200, height: 200, objectFit: "cover" }}
+      />
+      <ProgressBar percent={percent[index]} />
+    </div>
   ));
 
   const fileName =
@@ -169,8 +183,15 @@ export default function UploadForm() {
 
   return (
     <form onSubmit={onSubmit}>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>{previewImages}</div>
-      <ProgressBar percent={percent} />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          flexWrap: "wrap",
+        }}
+      >
+        {previewImages}
+      </div>
       <div className="file-dropper">
         {fileName}
         <input
