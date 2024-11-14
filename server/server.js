@@ -16,6 +16,9 @@ mongoose
     app.use("/uploads", express.static("uploads"));
     app.use(express.json());
     app.use(authenticate);
+    app.get("/", (req, res) => {
+      res.send("Express 서버가 정상적으로 작동 중입니다!");
+    });
     app.use("/users", userRouter);
     app.use("/images", imageRouter);
     app.listen(PORT, () =>
