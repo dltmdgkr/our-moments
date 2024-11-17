@@ -11,7 +11,7 @@ const { MONGO_URI, PORT } = process.env;
 
 app.use(
   cors({
-    origin: "*",
+    origin: ["https://our-moments.p-e.kr", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
