@@ -34,7 +34,7 @@ userRouter.post("/signup", async (req, res) => {
   }
 });
 
-userRouter.patch("/login", async (req, res) => {
+userRouter.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
 
@@ -59,7 +59,7 @@ userRouter.patch("/login", async (req, res) => {
   }
 });
 
-userRouter.patch("/logout", async (req, res) => {
+userRouter.post("/logout", async (req, res) => {
   try {
     if (!req.user) throw new Error("invalid sessionid");
 

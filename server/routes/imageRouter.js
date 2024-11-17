@@ -159,7 +159,7 @@ imageRouter.delete("/:imageId", async (req, res) => {
   }
 });
 
-imageRouter.patch("/:imageId/like", async (req, res) => {
+imageRouter.post("/:imageId/like", async (req, res) => {
   try {
     if (!req.user) throw new Error("권한이 없습니다.");
 
@@ -179,7 +179,7 @@ imageRouter.patch("/:imageId/like", async (req, res) => {
   }
 });
 
-imageRouter.patch("/:imageId/unlike", async (req, res) => {
+imageRouter.post("/:imageId/unlike", async (req, res) => {
   try {
     if (!req.user) throw new Error("권한이 없습니다.");
 
