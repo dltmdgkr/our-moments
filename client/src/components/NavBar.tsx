@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
-import axios from "axios";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export default function NavBar() {
   const { me, setMe, isLoading } = useContext(AuthContext);
@@ -9,7 +9,7 @@ export default function NavBar() {
 
   const logoutHandler = async () => {
     try {
-      await axios.patch("/users/logout");
+      await axiosInstance.post("/users/logout");
       setMe(null);
       navigate("/login");
     } catch (err) {

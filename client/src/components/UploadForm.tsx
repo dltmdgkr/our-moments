@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   ChangeEventHandler,
   FormEventHandler,
@@ -10,6 +9,7 @@ import ProgressBar from "./ProgressBar";
 import { ImageContext } from "../context/ImageProvider";
 import { toast } from "react-toastify";
 import "./UploadForm.css";
+import { axiosInstance } from "../utils/axiosInstance";
 
 interface Preview {
   imgSrc: string | ArrayBuffer | null;
@@ -61,7 +61,7 @@ export default function UploadForm() {
     e.preventDefault();
     if (!files) return;
     try {
-      const presignedData = await axios.post("/images/presigned", {
+      const presignedData = await axiosInstance.post("/images/presigned", {
         contentTypes: [...files].map((file) => file.type),
       });
 
@@ -78,7 +78,7 @@ export default function UploadForm() {
           formData.append("Content-Type", file.type);
           formData.append("file", file);
 
-          return axios.post(presigned.url, formData, {
+          return axiosInstance.post(presigned.url, formData, {
             onUploadProgress: (e) => {
               setPercent((prevData) => {
                 const newData = [...prevData];
@@ -90,7 +90,7 @@ export default function UploadForm() {
         })
       );
 
-      const res = await axios.post("/images", {
+      const res = await axiosInstance.post("/images", {
         images: [...files].map((file, index) => ({
           imageKey: presignedData.data[index].imageKey,
           originalname: file.name,

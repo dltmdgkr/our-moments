@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Image, ImageContext } from "../context/ImageProvider";
-import axios from "axios";
 import { AuthContext } from "../context/AuthProvider";
 import { toast } from "react-toastify";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export default function ImageDetailPage() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export default function ImageDetailPage() {
 
   useEffect(() => {
     if (image && image._id === imageId) return;
-    axios
+    axiosInstance
       .get(`/images/${imageId}`)
       .then((result) => setImage(result.data))
       .catch((err) => toast.error(err.response.data.message));
@@ -54,7 +54,7 @@ export default function ImageDetailPage() {
   // };
   const likeHandler = async () => {
     try {
-      const result = await axios.patch(
+      const result = await axiosInstance.post(
         `/images/${imageId}/${hasLiked ? "unlike" : "like"}`
       );
       const updatedImage = result.data;
@@ -83,7 +83,7 @@ export default function ImageDetailPage() {
   const deleteHandler = async () => {
     try {
       if (!window.confirm("정말로 삭제하시겠습니까?")) return;
-      const result = await axios.delete(`/images/${imageId}`);
+      const result = await axiosInstance.delete(`/images/${imageId}`);
       toast.success(result.data.message, { autoClose: 3000 });
 
       if (image?.public) {

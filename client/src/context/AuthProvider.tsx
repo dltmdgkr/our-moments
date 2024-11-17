@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   ReactNode,
   createContext,
@@ -7,6 +6,7 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
+import { axiosInstance } from "../utils/axiosInstance";
 
 interface User {
   sessionId: string;
@@ -33,11 +33,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const sessionId = localStorage.getItem("sessionId");
     if (me) {
-      axios.defaults.headers.common.sessionid = me.sessionId;
+      axiosInstance.defaults.headers.common.sessionid = me.sessionId;
       localStorage.setItem("sessionId", me.sessionId);
       setIsLoading(false);
     } else if (sessionId) {
-      axios
+      axiosInstance
         .get("/users/me", { headers: { sessionid: sessionId } })
         .then((result) => {
           setMe({
@@ -49,11 +49,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         })
         .catch(() => {
           localStorage.removeItem("sessionId");
-          delete axios.defaults.headers.common.sessionid;
+          delete axiosInstance.defaults.headers.common.sessionid;
           setIsLoading(false);
         });
     } else {
-      delete axios.defaults.headers.common.sessionid;
+      delete axiosInstance.defaults.headers.common.sessionid;
       setIsLoading(false);
     }
   }, [me]);

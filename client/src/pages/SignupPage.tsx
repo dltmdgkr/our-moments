@@ -1,7 +1,7 @@
-import axios from "axios";
 import { FormEventHandler, useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -14,7 +14,7 @@ export default function SignupPage() {
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     try {
       e.preventDefault();
-      const result = await axios.post("/users/signup", {
+      const result = await axiosInstance.post("/users/signup", {
         name,
         username,
         password,

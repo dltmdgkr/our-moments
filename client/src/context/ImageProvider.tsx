@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Dispatch,
   ReactNode,
@@ -11,6 +10,7 @@ import {
   useState,
 } from "react";
 import { AuthContext } from "./AuthProvider";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export interface Image {
   key: string;
@@ -58,7 +58,7 @@ export default function ImageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (pastImageUrlRef.current === imageUrl) return;
     setImageLoading(true);
-    axios
+    axiosInstance
       .get(imageUrl)
       .then((result) =>
         isPublic
@@ -75,7 +75,7 @@ export default function ImageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setTimeout(() => {
       if (me) {
-        axios
+        axiosInstance
           .get("/users/me/images")
           .then((result) => setMyPrivateImages(result.data))
           .catch((err) => console.error(err));

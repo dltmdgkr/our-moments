@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useState, FormEventHandler, useContext } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     try {
       e.preventDefault();
-      const result = await axios.patch("/users/login", {
+      const result = await axiosInstance.post("/users/login", {
         username,
         password,
       });
