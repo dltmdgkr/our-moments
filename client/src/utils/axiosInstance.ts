@@ -10,3 +10,16 @@ export const axiosInstance = axios.create({
     Accept: "application/json",
   },
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const sessionId = localStorage.getItem("sessionId");
+    if (sessionId) {
+      config.headers.sessionid = sessionId;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
