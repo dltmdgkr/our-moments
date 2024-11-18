@@ -23,13 +23,19 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Origin",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+    "sessionid",
+  ],
   credentials: true,
 };
 
 app.use(cors(corsOptions));
 
-// app.options("*", cors(corsOptions));
 app.options("*", (req, res) => {
   const origin = req.headers.origin;
 
