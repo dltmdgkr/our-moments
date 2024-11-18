@@ -14,9 +14,12 @@ if (!MONGO_URI || !PORT) {
   process.exit(1);
 }
 
-const allowedOrigins = ["https://our-moments.p-e.kr", "http://localhost:3000"];
 const corsOptions = {
   origin: (origin, callback) => {
+    const allowedOrigins = [
+      "https://our-moments.p-e.kr",
+      "http://localhost:3000",
+    ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, origin);
     } else {
@@ -35,28 +38,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-app.options("*", (req, res) => {
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS"
-    );
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, Content-Type, Accept, Authorization"
-    );
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.status(204).send();
-  } else {
-    res
-      .status(403)
-      .send({ message: "CORS policy does not allow this origin." });
-  }
-});
+app.options("*", cors(corsOptions));
 
 function setupMiddleware(app) {
   app.use("/uploads", express.static("uploads"));
