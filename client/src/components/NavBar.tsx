@@ -9,7 +9,7 @@ export default function NavBar() {
 
   const logoutHandler = async () => {
     try {
-      await axiosInstance.post("/users/logout");
+      await axiosInstance.patch("/users/logout");
       setMe(null);
       navigate("/login");
     } catch (err) {

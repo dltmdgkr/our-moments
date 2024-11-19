@@ -12,7 +12,7 @@ export default function LoginPage() {
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     try {
       e.preventDefault();
-      const result = await axiosInstance.post("/users/login", {
+      const result = await axiosInstance.patch("/users/login", {
         username,
         password,
       });

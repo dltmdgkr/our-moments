@@ -54,7 +54,7 @@ export default function ImageDetailPage() {
   // };
   const likeHandler = async () => {
     try {
-      const result = await axiosInstance.post(
+      const result = await axiosInstance.patch(
         `/images/${imageId}/${hasLiked ? "unlike" : "like"}`
       );
       const updatedImage = result.data;
