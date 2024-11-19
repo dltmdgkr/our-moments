@@ -10,6 +10,7 @@ import { ImageContext } from "../context/ImageProvider";
 import { toast } from "react-toastify";
 import "./UploadForm.css";
 import { axiosInstance } from "../utils/axiosInstance";
+import axios from "axios";
 
 interface Preview {
   imgSrc: string | ArrayBuffer | null;
@@ -78,7 +79,7 @@ export default function UploadForm() {
           formData.append("Content-Type", file.type);
           formData.append("file", file);
 
-          return axiosInstance.post(presigned.url, formData, {
+          return axios.post(presigned.url, formData, {
             onUploadProgress: (e) => {
               setPercent((prevData) => {
                 const newData = [...prevData];
