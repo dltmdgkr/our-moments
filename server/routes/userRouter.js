@@ -36,7 +36,9 @@ userRouter.post("/signup", async (req, res) => {
 
 userRouter.post("/login", async (req, res) => {
   try {
+    console.log("Request received:", req.body);
     const user = await User.findOne({ username: req.body.username });
+    if (!user) throw new Error("User not found");
 
     const isValid = await compare(req.body.password, user.password);
 
@@ -55,6 +57,8 @@ userRouter.post("/login", async (req, res) => {
       userId: user._id,
     });
   } catch (err) {
+    console.log(err);
+    console.error(err);
     res.status(400).json({ message: err.message });
   }
 });
