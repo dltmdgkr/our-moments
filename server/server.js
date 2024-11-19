@@ -46,35 +46,12 @@ function setupMiddleware(app) {
   app.use(authenticate);
 }
 
-// function setupRoutes(app) {
-//   app.get("/", (req, res) => {
-//     res.send("Express 서버가 정상적으로 작동 중입니다!");
-//   });
-//   app.use("/users", userRouter);
-//   app.use("/images", imageRouter);
-// }
 function setupRoutes(app) {
   app.get("/", (req, res) => {
     res.send("Express 서버가 정상적으로 작동 중입니다!");
   });
   app.use("/users", userRouter);
   app.use("/images", imageRouter);
-
-  // 라우터 등록 확인
-  console.log("Registered routes:");
-  app._router.stack.forEach((middleware) => {
-    if (middleware.route) {
-      console.log(`Route registered: ${middleware.route.path}`);
-    } else if (middleware.name === "router") {
-      middleware.handle.stack.forEach((nestedMiddleware) => {
-        if (nestedMiddleware.route) {
-          console.log(
-            `Nested route registered: ${nestedMiddleware.route.path}`
-          );
-        }
-      });
-    }
-  });
 }
 
 function setupErrorHandling(app) {

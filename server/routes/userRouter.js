@@ -5,6 +5,33 @@ const Image = require("../models/Image");
 const { hash, compare } = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 
+userRouter.post("/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.body.username });
+
+    const isValid = await compare(req.body.password, user.password);
+
+    if (!isValid) throw new Error("입력하신 정보가 올바르지 않습니다.");
+
+    user.sessions.push({ createdAt: new Date() });
+
+    const session = user.sessions[user.sessions.length - 1];
+
+    await user.save();
+
+    res.json({
+      message: "user validated!!",
+      sessionId: session._id,
+      name: user.name,
+      userId: user._id,
+    });
+  } catch (err) {
+    console.log(err);
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
 userRouter.post("/signup", async (req, res) => {
   try {
     if (req.body.password.length < 6)
@@ -30,35 +57,6 @@ userRouter.post("/signup", async (req, res) => {
       userId: user._id,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-userRouter.post("/login", async (req, res) => {
-  try {
-    console.log("Request received:", req.body);
-    const user = await User.findOne({ username: req.body.username });
-    if (!user) throw new Error("User not found");
-
-    const isValid = await compare(req.body.password, user.password);
-
-    if (!isValid) throw new Error("입력하신 정보가 올바르지 않습니다.");
-
-    user.sessions.push({ createdAt: new Date() });
-
-    const session = user.sessions[user.sessions.length - 1];
-
-    await user.save();
-
-    res.json({
-      message: "user validated!!",
-      sessionId: session._id,
-      name: user.name,
-      userId: user._id,
-    });
-  } catch (err) {
-    console.log(err);
-    console.error(err);
     res.status(400).json({ message: err.message });
   }
 });
