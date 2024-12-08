@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { ImageContext } from "../context/ImageProvider";
 import { Link } from "react-router-dom";
 import "./ImageList.css";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function ImageList() {
   const {
@@ -12,6 +13,7 @@ export default function ImageList() {
     loadMoreImages,
     imageLoading,
   } = useContext(ImageContext);
+  const { me } = useContext(AuthContext);
 
   const imgList = (isPublic ? images : myPrivateImages).map((image, index) => (
     <Link key={`${image.key}-${index}`} to={`/images/${image._id}`}>
@@ -27,9 +29,11 @@ export default function ImageList() {
       <h3 style={{ display: "inline-block", marginRight: 10 }}>
         Image List {isPublic ? "공개" : "개인"} 사진
       </h3>
-      <button onClick={() => setIsPublic((prev) => !prev)}>
-        {(isPublic ? "개인" : "공개") + "사진 보기"}
-      </button>
+      {me && (
+        <button onClick={() => setIsPublic((prev) => !prev)}>
+          {(isPublic ? "개인" : "공개") + "사진 보기"}
+        </button>
+      )}
       <div className="image-list-container">
         {imgList.length > 0
           ? imgList
