@@ -37,11 +37,13 @@ export default function SignupPage() {
         username: data.username,
         password: data.password,
       });
+
       setMe({
         sessionId: result.data.sessionId,
         userId: result.data.userId,
         name: result.data.name,
       });
+
       navigate("/");
     } catch (err) {
       console.error(err);
