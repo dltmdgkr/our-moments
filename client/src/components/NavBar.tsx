@@ -14,6 +14,8 @@ export default function NavBar() {
       navigate("/login");
     } catch (err) {
       console.error(err);
+    } finally {
+      localStorage.removeItem("sessionId");
     }
   };
 
