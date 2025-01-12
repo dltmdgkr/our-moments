@@ -26,6 +26,10 @@ export default function NavBar() {
       <Link to="/">
         <span>갤러리</span>
       </Link>
+      &nbsp;
+      <Link to="/map">
+        <span>지도</span>
+      </Link>
       {me ? (
         <span
           onClick={logoutHandler}

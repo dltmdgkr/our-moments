@@ -6,19 +6,28 @@ import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import NavBar from "./components/NavBar";
 import ImageDetailPage from "./pages/ImageDetailPage";
+import KakaoMapScriptLoader from "./map/KakaoMapScriptLoader";
+import MapPage from "./pages/MapPage";
+import DynamicMap from "./map/DynamicMap";
 
 function App() {
   return (
-    <div style={{ width: 600, margin: "auto" }}>
-      <NavBar />
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<GalleryPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/images/:imageId" element={<ImageDetailPage />} />
-      </Routes>
-    </div>
+    <>
+      {/* <KakaoMapScriptLoader>
+        <DynamicMap />
+      </KakaoMapScriptLoader> */}
+      <div style={{ width: 600, margin: "auto" }}>
+        <NavBar />
+        <ToastContainer />
+        <Routes>
+          <Route path="/" element={<GalleryPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/images/:imageId" element={<ImageDetailPage />} />
+          <Route path="/map" element={<MapPage />} />
+        </Routes>
+      </div>
+    </>
   );
 }
 
