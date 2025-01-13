@@ -8,7 +8,7 @@ export default function KakaoMapScriptLoader({
   const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
 
   const KAKAO_MAP_SCRIPT_ID = "kakao-map-script";
-  const KAKAO_MAP_APP_KEY = "f1804ab0bd2b6e4c2ebc307d376c2322";
+  const KAKAO_MAP_APP_KEY = process.env.REACT_APP_KAKAO_MAP_KEY;
 
   useEffect(() => {
     const mapScript = document.getElementById(KAKAO_MAP_SCRIPT_ID);
