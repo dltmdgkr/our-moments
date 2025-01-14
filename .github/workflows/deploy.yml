@@ -17,9 +17,9 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            cd /home/ubuntu/our-moments
+            cd /home/ubuntu/our-moments/server
             git pull origin main
             npm i
-            npm run build
+            npm run dev
             pm2 kill
             pm2 start server.js
