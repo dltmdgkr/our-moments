@@ -37,6 +37,8 @@ const corsOptions = {
   credentials: true,
 };
 
+// 테스트용 주석
+
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
