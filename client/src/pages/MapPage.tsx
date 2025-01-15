@@ -15,6 +15,7 @@ export default function MapPage() {
             backgroundColor: "rgba(255, 255, 255, 0.8)",
             height: "100%",
             zIndex: 1,
+            overflowY: "auto",
           }}
         >
           <SearchLocation />
