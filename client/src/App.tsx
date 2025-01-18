@@ -8,23 +8,28 @@ import NavBar from "./components/NavBar";
 import ImageDetailPage from "./pages/ImageDetailPage";
 import KakaoMapScriptLoader from "./map/KakaoMapScriptLoader";
 import MapPage from "./pages/MapPage";
-import DynamicMap from "./map/DynamicMap";
 
 function App() {
   return (
     <>
-      {/* <KakaoMapScriptLoader>
-        <DynamicMap />
-      </KakaoMapScriptLoader> */}
       <div style={{ width: 600, margin: "auto" }}>
         <NavBar />
         <ToastContainer />
         <Routes>
-          <Route path="/" element={<GalleryPage />} />
+          <Route
+            path="/"
+            element={
+              <KakaoMapScriptLoader>
+                <div style={{ position: "relative", height: "100vh" }}>
+                  <MapPage />
+                </div>
+              </KakaoMapScriptLoader>
+            }
+          />
+          <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/images/:imageId" element={<ImageDetailPage />} />
-          <Route path="/map" element={<MapPage />} />
         </Routes>
       </div>
     </>

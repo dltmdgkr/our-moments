@@ -24,11 +24,11 @@ export default function NavBar() {
   return (
     <>
       <Link to="/">
-        <span>갤러리</span>
+        <span>홈</span>
       </Link>
       &nbsp;
-      <Link to="/map">
-        <span>지도</span>
+      <Link to="/gallery">
+        <span>갤러리</span>
       </Link>
       {me ? (
         <span

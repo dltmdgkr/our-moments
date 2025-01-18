@@ -13,20 +13,25 @@ export default function KakaoMapScriptLoader({
   useEffect(() => {
     const mapScript = document.getElementById(KAKAO_MAP_SCRIPT_ID);
 
-    if (mapScript && !window.kakao) return;
+    if (mapScript && window.kakao && window.kakao.maps) {
+      setMapScriptLoaded(true);
+      return;
+    }
 
-    const script = document.createElement("script");
-    script.id = KAKAO_MAP_SCRIPT_ID;
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_APP_KEY}&libraies=services&autoload=false`;
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        setMapScriptLoaded(true);
-      });
-    };
-    script.onerror = () => {
-      setMapScriptLoaded(false);
-    };
-    document.getElementById("root")?.appendChild(script);
+    if (!mapScript) {
+      const script = document.createElement("script");
+      script.id = KAKAO_MAP_SCRIPT_ID;
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_APP_KEY}&libraries=services&autoload=false`;
+      script.onload = () => {
+        window.kakao.maps.load(() => {
+          setMapScriptLoaded(true);
+        });
+      };
+      script.onerror = () => {
+        setMapScriptLoaded(false);
+      };
+      document.getElementById("root")?.appendChild(script);
+    }
   }, []);
 
   return (

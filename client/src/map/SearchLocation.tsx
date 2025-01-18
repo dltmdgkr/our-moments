@@ -1,11 +1,61 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import "./SearchLocation.css";
+
+interface PlaceType {
+  id: string;
+  position: kakao.maps.LatLng;
+  title: string;
+  address: string;
+}
 
 export default function SearchLocation() {
   const [keyword, setKeyword] = useState("");
+  const [places, setPlaces] = useState<PlaceType[]>([]);
+  const placeService = useRef<kakao.maps.services.Places | null>(null);
+
+  useEffect(() => {
+    if (placeService.current) return;
+
+    placeService.current = new kakao.maps.services.Places();
+  }, []);
+
+  const searchPlaces = (keyword: string) => {
+    if (!placeService.current) return;
+
+    if (!keyword.replace(/^\s+|\s+$/g, "")) {
+      alert("키워드를 입력해주세요!");
+      return;
+    }
+
+    placeService.current.keywordSearch(keyword, (data, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        console.log(data);
+        const placeInfos = data.map((placeSearchResultItem) => {
+          return {
+            id: placeSearchResultItem.id,
+            position: new kakao.maps.LatLng(
+              Number(placeSearchResultItem.y),
+              Number(placeSearchResultItem.x)
+            ),
+            title: placeSearchResultItem.place_name,
+            address: placeSearchResultItem.address_name,
+          };
+        });
+
+        setPlaces(placeInfos);
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        alert("검색 결과가 존재하지 않습니다.");
+        return;
+      } else if (status === kakao.maps.services.Status.ERROR) {
+        alert("검색 결과 중 오류가 발생했습니다.");
+        return;
+      }
+    });
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    searchPlaces(keyword);
   };
 
   return (
@@ -19,11 +69,11 @@ export default function SearchLocation() {
         />
       </form>
       <ul>
-        {Array.from({ length: 30 }).map((item, index) => {
+        {places.map((item, index) => {
           return (
-            <li key={index}>
-              <span>지역</span>
-              <span>서울 강남구 신사동 668-33</span>
+            <li key={item.id}>
+              <span>{`${index + 1}. ${item.title}`}</span>
+              <span>{item.address}</span>
             </li>
           );
         })}
