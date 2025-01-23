@@ -1,14 +1,14 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import "./SearchLocation.css";
+import { useMap } from "../hooks/useMap";
+import { PlaceType } from "./mapTypes";
 
-interface PlaceType {
-  id: string;
-  position: kakao.maps.LatLng;
-  title: string;
-  address: string;
+interface SearchLocationProps {
+  onUpdatePlaces: (places: PlaceType[]) => void;
 }
 
-export default function SearchLocation() {
+export default function SearchLocation(props: SearchLocationProps) {
+  const map = useMap();
   const [keyword, setKeyword] = useState("");
   const [places, setPlaces] = useState<PlaceType[]>([]);
   const placeService = useRef<kakao.maps.services.Places | null>(null);
@@ -42,6 +42,7 @@ export default function SearchLocation() {
           };
         });
 
+        props.onUpdatePlaces(placeInfos);
         setPlaces(placeInfos);
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
         alert("검색 결과가 존재하지 않습니다.");
@@ -58,6 +59,11 @@ export default function SearchLocation() {
     searchPlaces(keyword);
   };
 
+  const handleItemClick = (place: PlaceType) => {
+    map.setCenter(place.position);
+    map.setLevel(4);
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -71,7 +77,7 @@ export default function SearchLocation() {
       <ul>
         {places.map((item, index) => {
           return (
-            <li key={item.id}>
+            <li key={item.id} onClick={() => handleItemClick(item)}>
               <span>{`${index + 1}. ${item.title}`}</span>
               <span>{item.address}</span>
             </li>

@@ -1,7 +1,9 @@
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import "./DynamicMap.css";
+import { kakaoMapContext } from "../hooks/useMap";
 
-export default function DynamicMap() {
+export default function DynamicMap({ children }: { children: ReactNode }) {
+  const [map, setMap] = useState<kakao.maps.Map>();
   const kakaoMapRef = useRef(null);
 
   useEffect(() => {
@@ -13,12 +15,21 @@ export default function DynamicMap() {
       level: 3,
     };
 
-    new kakao.maps.Map(kakaoMapRef.current, options);
+    setMap(new kakao.maps.Map(kakaoMapRef.current, options));
   }, []);
 
   return (
-    <div className="container">
-      <div ref={kakaoMapRef} className="map" />
-    </div>
+    <>
+      <div className="container">
+        <div ref={kakaoMapRef} className="map" />
+      </div>
+      {map ? (
+        <kakaoMapContext.Provider value={map}>
+          {children}
+        </kakaoMapContext.Provider>
+      ) : (
+        <div>지도를 정보를 가져오는데 실패하였습니다.</div>
+      )}
+    </>
   );
 }
