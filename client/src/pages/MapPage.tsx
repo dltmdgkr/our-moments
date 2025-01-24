@@ -2,6 +2,7 @@ import { useState } from "react";
 import DynamicMap from "../map/DynamicMap";
 import SearchLocation from "../map/SearchLocation";
 import { PlaceType } from "../map/mapTypes";
+import MapMarkerController from "../map/MapMarkerController";
 
 export default function MapPage() {
   const [places, setPlaces] = useState<PlaceType[]>([]);
@@ -20,6 +21,7 @@ export default function MapPage() {
             overflowY: "auto",
           }}
         >
+          <MapMarkerController places={places} />
           <SearchLocation
             onUpdatePlaces={(places) => {
               setPlaces(places);

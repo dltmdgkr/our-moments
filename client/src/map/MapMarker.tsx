@@ -1,9 +1,25 @@
+import { useLayoutEffect, useMemo } from "react";
 import { PlaceType } from "./mapTypes";
+import { useMap } from "../hooks/useMap";
 
-interface MapMarkerProps {
-  place: PlaceType;
-}
+export default function MapMarker({ place }: { place: PlaceType }) {
+  const map = useMap();
 
-export default function MapMarker(props: MapMarkerProps) {
+  const marker = useMemo(() => {
+    const marker = new kakao.maps.Marker({ position: place.position });
+
+    marker.setMap(map);
+
+    return marker;
+  }, []);
+
+  useLayoutEffect(() => {
+    marker.setMap(map);
+
+    return () => {
+      marker.setMap(null);
+    };
+  }, [map]);
+
   return <div></div>;
 }

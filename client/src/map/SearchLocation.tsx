@@ -29,7 +29,6 @@ export default function SearchLocation(props: SearchLocationProps) {
 
     placeService.current.keywordSearch(keyword, (data, status) => {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data);
         const placeInfos = data.map((placeSearchResultItem) => {
           return {
             id: placeSearchResultItem.id,
