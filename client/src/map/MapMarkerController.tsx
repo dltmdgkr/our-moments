@@ -5,8 +5,10 @@ import { PlaceType } from "./mapTypes";
 
 export default function MapMarkerController({
   places,
+  selectedPlaceId,
 }: {
   places: PlaceType[];
+  selectedPlaceId?: string;
 }) {
   const map = useMap();
 
@@ -24,8 +26,15 @@ export default function MapMarkerController({
 
   return (
     <>
-      {places.map((place) => {
-        return <MapMarker key={place.id} place={place} />;
+      {places.map((place, index) => {
+        return (
+          <MapMarker
+            key={place.id}
+            place={place}
+            index={index}
+            showInfo={selectedPlaceId === place.id}
+          />
+        );
       })}
     </>
   );

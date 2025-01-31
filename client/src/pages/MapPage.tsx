@@ -6,6 +6,7 @@ import MapMarkerController from "../map/MapMarkerController";
 
 export default function MapPage() {
   const [places, setPlaces] = useState<PlaceType[]>([]);
+  const [selectedPlaceId, setSelectedPlaceId] = useState("");
 
   return (
     <div style={{ position: "relative", height: "100vh" }}>
@@ -21,10 +22,16 @@ export default function MapPage() {
             overflowY: "auto",
           }}
         >
-          <MapMarkerController places={places} />
+          <MapMarkerController
+            places={places}
+            selectedPlaceId={selectedPlaceId}
+          />
           <SearchLocation
             onUpdatePlaces={(places) => {
               setPlaces(places);
+            }}
+            onSelect={(placeId) => {
+              setSelectedPlaceId(placeId);
             }}
           />
         </div>
