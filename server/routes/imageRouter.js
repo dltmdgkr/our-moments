@@ -39,7 +39,7 @@ imageRouter.post("/presigned", async (req, res) => {
 imageRouter.post("/", upload.array("image", 5), async (req, res) => {
   try {
     if (!req.user) throw new Error("로그인 후 이용해주세요.");
-    const { images, public } = req.body;
+    const { images, public, title, description, location } = req.body;
 
     const imageDocs = await Promise.all(
       images.map((image) =>
@@ -50,6 +50,9 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
             username: req.user.username,
           },
           public,
+          title,
+          description,
+          location,
           key: image.imageKey,
           originalFileName: image.originalname,
         }).save()
@@ -59,7 +62,7 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
     res.json(imageDocs);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ message: res.message });
+    res.status(400).json({ message: err.message });
   }
 });
 

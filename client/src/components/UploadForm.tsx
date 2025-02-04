@@ -11,18 +11,29 @@ import { toast } from "react-toastify";
 import "./UploadForm.css";
 import { axiosInstance } from "../utils/axiosInstance";
 import axios from "axios";
+import { PlaceType } from "../map/mapTypes";
 
 interface Preview {
   imgSrc: string | ArrayBuffer | null;
   fileName: string;
 }
 
-export default function UploadForm() {
+interface MarkerContextType {
+  selectedMarker: PlaceType | null;
+  setSelectedMarker: (place: PlaceType | null) => void;
+}
+
+export default function UploadForm({
+  selectedMarker,
+  setSelectedMarker,
+}: MarkerContextType) {
   const { setImages, setMyPrivateImages } = useContext(ImageContext);
   const [files, setFiles] = useState<File[] | null>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [percent, setPercent] = useState<number[]>([]);
   const [isPublic, setIsPublic] = useState(true);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
@@ -60,7 +71,10 @@ export default function UploadForm() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (!files) return;
+    if (!files || title.trim() === "" || description.trim() === "") {
+      toast.error("제목과 내용을 입력해주세요.");
+      return;
+    }
     try {
       const presignedData = await axiosInstance.post("/images/presigned", {
         contentTypes: [...files].map((file) => file.type),
@@ -97,7 +111,11 @@ export default function UploadForm() {
           originalname: file.name,
         })),
         public: isPublic,
+        title,
+        description,
+        location: selectedMarker?.address,
       });
+      console.log("/images post 요청 결과값", res.data);
 
       if (isPublic) {
         setImages((prevData) => [...res.data, ...prevData]);
@@ -110,6 +128,9 @@ export default function UploadForm() {
       });
 
       setTimeout(() => {
+        setSelectedMarker(null);
+        setTitle("");
+        setDescription("");
         setPercent([]);
         setPreviews([]);
         if (inputRef.current) inputRef.current.value = "";
@@ -117,6 +138,9 @@ export default function UploadForm() {
     } catch (err) {
       console.error(err);
       toast.error("이미지 업로드에 실패했습니다.");
+      setSelectedMarker(null);
+      setTitle("");
+      setDescription("");
       setPercent([]);
       setPreviews([]);
       if (inputRef.current) inputRef.current.value = "";
@@ -187,7 +211,24 @@ export default function UploadForm() {
         );
 
   return (
-    <form onSubmit={onSubmit}>
+    <form
+      onSubmit={onSubmit}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <input
+        type="text"
+        placeholder="제목을 입력하세요"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <textarea
+        placeholder="내용을 입력하세요"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
       <div
         style={{
           display: "flex",

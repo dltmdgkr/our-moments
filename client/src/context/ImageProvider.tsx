@@ -21,6 +21,9 @@ export interface Image {
     name: string;
     username: string;
   };
+  title: string;
+  description: string;
+  location: string;
   public: boolean;
   createdAt: Date;
 }

@@ -8,7 +8,7 @@ export default function GalleryPage() {
   return (
     <>
       <h2>사진첩</h2>
-      {me && <UploadForm />}
+      {/* {me && <UploadForm />} */}
       <ImageList />
     </>
   );

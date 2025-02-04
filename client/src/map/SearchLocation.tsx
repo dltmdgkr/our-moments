@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import "./SearchLocation.css";
 import { useMap } from "../hooks/useMap";
 import { PlaceType } from "./mapTypes";
+import { useMapMarker } from "../context/MapMarkerContext";
 
 interface SearchLocationProps {
   onUpdatePlaces: (places: PlaceType[]) => void;
@@ -13,6 +14,7 @@ export default function SearchLocation(props: SearchLocationProps) {
   const [keyword, setKeyword] = useState("");
   const [places, setPlaces] = useState<PlaceType[]>([]);
   const placeService = useRef<kakao.maps.services.Places | null>(null);
+  const { setSelectedMarker } = useMapMarker();
 
   useEffect(() => {
     if (placeService.current) return;
@@ -63,6 +65,7 @@ export default function SearchLocation(props: SearchLocationProps) {
     map.setCenter(place.position);
     map.setLevel(4);
     props.onSelect(place.id);
+    setSelectedMarker(place);
   };
 
   return (
