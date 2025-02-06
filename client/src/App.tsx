@@ -10,6 +10,7 @@ import KakaoMapScriptLoader from "./map/KakaoMapScriptLoader";
 import MapPage from "./pages/MapPage";
 import UploadPage from "./pages/UploadPage";
 import { MapMarkerProvider } from "./context/MapMarkerContext";
+import DynamicMap from "./map/DynamicMap";
 
 function App() {
   return (
@@ -23,7 +24,9 @@ function App() {
               path="/"
               element={
                 <KakaoMapScriptLoader>
-                  <MapPage />
+                  <DynamicMap>
+                    <MapPage />
+                  </DynamicMap>
                 </KakaoMapScriptLoader>
               }
             />

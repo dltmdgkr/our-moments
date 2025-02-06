@@ -24,6 +24,7 @@ export interface Image {
   title: string;
   description: string;
   location: string;
+  position: kakao.maps.LatLng;
   public: boolean;
   createdAt: Date;
 }

@@ -4,6 +4,8 @@ import { Image, ImageContext } from "../context/ImageProvider";
 import { AuthContext } from "../context/AuthProvider";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axiosInstance";
+import { HiOutlineLocationMarker } from "react-icons/hi";
+import styled from "styled-components";
 
 export default function ImageDetailPage() {
   const navigate = useNavigate();
@@ -102,6 +104,15 @@ export default function ImageDetailPage() {
     }
   };
 
+  const moveToLocation = () => {
+    if (!image?.position) {
+      toast.error("위치 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    navigate("/", { state: { position: image.position } });
+  };
+
   return (
     <div>
       <h3>ImageDetailPage {imageId}</h3>
@@ -110,7 +121,14 @@ export default function ImageDetailPage() {
         src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
         alt={`image-${imageId}`}
       />
+      <LocationWrapper>
+        <HiOutlineLocationMarker />
+        <LocationText>{image.location}</LocationText>
+      </LocationWrapper>
+      <h2>{image.title}</h2>
+      <p>{image.description}</p>
       <div>좋아요 {image.likes.length}</div>
+      <button onClick={moveToLocation}>위치 보기</button>
       <button style={{ float: "right" }} onClick={likeHandler}>
         {hasLiked ? "좋아요 취소" : "좋아요"}
       </button>
@@ -120,3 +138,15 @@ export default function ImageDetailPage() {
     </div>
   );
 }
+
+const LocationWrapper = styled.div`
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  color: #6c757d;
+  gap: 4px;
+`;
+
+const LocationText = styled.span`
+  display: inline-block;
+`;

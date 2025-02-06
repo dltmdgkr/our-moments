@@ -10,6 +10,7 @@ const ImageSchema = new mongoose.Schema(
     title: { type: String, required: true },
     description: { type: String, required: true },
     location: { type: String, required: true },
+    position: { type: Object, required: true },
     likes: [{ type: mongoose.Types.ObjectId }],
     public: { type: Boolean, required: true, default: false },
     key: { type: String, required: true },

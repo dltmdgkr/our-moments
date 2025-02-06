@@ -2,6 +2,7 @@ import {
   ChangeEventHandler,
   FormEventHandler,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -34,7 +35,21 @@ export default function UploadForm({
   const [isPublic, setIsPublic] = useState(true);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (selectedMarker) {
+      setPosition({
+        lat: selectedMarker.position.getLat(),
+        lng: selectedMarker.position.getLng(),
+      });
+    } else {
+      setPosition(null);
+    }
+  }, [selectedMarker]);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
     e
@@ -114,6 +129,7 @@ export default function UploadForm({
         title,
         description,
         location: selectedMarker?.address,
+        position,
       });
       console.log("/images post 요청 결과값", res.data);
 
