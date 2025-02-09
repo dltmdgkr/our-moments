@@ -44,7 +44,6 @@ export default function MapMarker({
       imageSize,
       imgOptions
     );
-
     const marker = new kakao.maps.Marker({
       map,
       position: place.position,

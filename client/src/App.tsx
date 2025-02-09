@@ -16,27 +16,25 @@ function App() {
   return (
     <>
       <MapMarkerProvider>
-        <div style={{ width: "80%", margin: "auto" }}>
-          <NavBar />
-          <ToastContainer />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <KakaoMapScriptLoader>
-                  <DynamicMap>
-                    <MapPage />
-                  </DynamicMap>
-                </KakaoMapScriptLoader>
-              }
-            />
-            <Route path="/gallery" element={<GalleryPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/images/:imageId" element={<ImageDetailPage />} />
-            <Route path="/upload" element={<UploadPage />} />
-          </Routes>
-        </div>
+        <NavBar />
+        <ToastContainer />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <KakaoMapScriptLoader>
+                <DynamicMap>
+                  <MapPage />
+                </DynamicMap>
+              </KakaoMapScriptLoader>
+            }
+          />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/images/:imageId" element={<ImageDetailPage />} />
+          <Route path="/upload" element={<UploadPage />} />
+        </Routes>
       </MapMarkerProvider>
     </>
   );
