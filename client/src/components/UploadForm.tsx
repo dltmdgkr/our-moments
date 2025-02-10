@@ -131,7 +131,6 @@ export default function UploadForm({
         location: selectedMarker?.address,
         position,
       });
-      console.log("/images post 요청 결과값", res.data);
 
       if (isPublic) {
         setImages((prevData) => [...res.data, ...prevData]);

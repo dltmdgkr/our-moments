@@ -7,6 +7,7 @@ import { IoSearch } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "../hooks/useMap";
 import { useMapMarker } from "../context/MapMarkerContext";
+import { axiosInstance } from "../utils/axiosInstance";
 
 export default function MapPage() {
   const location = useLocation();
@@ -21,6 +22,22 @@ export default function MapPage() {
   const markerRef = useRef<kakao.maps.Marker | null>(null);
   const overlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
 
+  const [moments, setMoments] = useState<PlaceType[]>([]);
+  const markersRef = useRef<kakao.maps.Marker[]>([]);
+
+  useEffect(() => {
+    const fetchMoments = async () => {
+      try {
+        const res = await axiosInstance.get("/images");
+        setMoments(res.data);
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+      }
+    };
+
+    fetchMoments();
+  }, []);
+
   useEffect(() => {
     if (position && map) {
       const moveLatLon = new kakao.maps.LatLng(position.lat, position.lng);
@@ -28,6 +45,52 @@ export default function MapPage() {
       map.setLevel(4, { animate: true });
     }
   }, [position, map]);
+
+  const getLatLng = (
+    position: kakao.maps.LatLng | { lat: number; lng: number }
+  ) => {
+    if (position instanceof kakao.maps.LatLng) {
+      return { lat: position.getLat(), lng: position.getLng() };
+    }
+    return { lat: position.lat, lng: position.lng };
+  };
+
+  useEffect(() => {
+    if (!map || moments.length === 0) return;
+
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
+
+    moments.forEach((moment) => {
+      if (!moment.position) return;
+
+      const { lat, lng } = getLatLng(moment.position);
+      const markerPosition = new kakao.maps.LatLng(lat, lng);
+
+      const imageSrc = "/moment_marker.gif";
+      const imageSize = new kakao.maps.Size(28, 35);
+      const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+      const marker = new kakao.maps.Marker({
+        position: markerPosition,
+        map: map,
+        image: markerImage,
+      });
+
+      markersRef.current.push(marker);
+
+      kakao.maps.event.addListener(marker, "click", () => {
+        setSelectedMarker({
+          id: moment.id,
+          title: moment.title || "제목 없음",
+          position: moment.position,
+          address: moment.address || "주소 없음",
+        });
+
+        setSelectedPlaceId(moment.id);
+      });
+    });
+  }, [map, moments]);
 
   useEffect(() => {
     if (!map) return;
