@@ -7,12 +7,12 @@ import {
   useState,
 } from "react";
 import ProgressBar from "./ProgressBar";
-import { ImageContext } from "../context/ImageProvider";
 import { toast } from "react-toastify";
 import "./UploadForm.css";
 import { axiosInstance } from "../utils/axiosInstance";
 import axios from "axios";
 import { PlaceType } from "../map/mapTypes";
+import { PostContext } from "../context/PostProvider";
 
 interface Preview {
   imgSrc: string | ArrayBuffer | null;
@@ -28,7 +28,7 @@ export default function UploadForm({
   selectedMarker,
   setSelectedMarker,
 }: MarkerContextType) {
-  const { setImages, setMyPrivateImages } = useContext(ImageContext);
+  const { setPosts, setMyPrivatePosts } = useContext(PostContext);
   const [files, setFiles] = useState<File[] | null>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [percent, setPercent] = useState<number[]>([]);
@@ -59,7 +59,10 @@ export default function UploadForm({
     if (imageFiles && imageFiles.length > 0) {
       const imageArray = Array.from(imageFiles);
 
-      setFiles(imageArray);
+      setFiles((prevFiles) => {
+        const newFiles = prevFiles ? [...prevFiles, ...imageArray] : imageArray;
+        return newFiles.slice(0, 5);
+      });
 
       const imagePreviews = await Promise.all(
         [...imageArray].map(async (imageFile) => {
@@ -80,7 +83,10 @@ export default function UploadForm({
         })
       );
 
-      setPreviews(imagePreviews);
+      setPreviews((prevPreviews) => {
+        const newPreviews = [...prevPreviews, ...imagePreviews];
+        return newPreviews.slice(0, 5);
+      });
     }
   };
 
@@ -133,9 +139,9 @@ export default function UploadForm({
       });
 
       if (isPublic) {
-        setImages((prevData) => [...res.data, ...prevData]);
+        setPosts((prevData) => [res.data, ...prevData]);
       } else {
-        setMyPrivateImages((prevData) => [...res.data, ...prevData]);
+        setMyPrivatePosts((prevData) => [res.data, ...prevData]);
       }
 
       toast.success("이미지가 성공적으로 업로드되었습니다!", {

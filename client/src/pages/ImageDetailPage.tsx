@@ -1,44 +1,44 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Image, ImageContext } from "../context/ImageProvider";
 import { AuthContext } from "../context/AuthProvider";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axiosInstance";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import styled from "styled-components";
+import { Image, Post, PostContext } from "../context/PostProvider";
 
 export default function ImageDetailPage() {
   const navigate = useNavigate();
-  const { imageId } = useParams();
-  const { images, myPrivateImages, setImages, setMyPrivateImages } =
-    useContext(ImageContext);
+  const { postId } = useParams();
+  const { posts, myPrivatePosts, setPosts, setMyPrivatePosts } =
+    useContext(PostContext);
   const { me } = useContext(AuthContext);
   const [hasLiked, setHasLiked] = useState(false);
-  const [image, setImage] = useState<Image>();
+  const [post, setPost] = useState<Post>();
 
   useEffect(() => {
-    const img =
-      images.find((image) => image._id === imageId) ||
-      myPrivateImages.find((image) => image._id === imageId);
-    if (img) setImage(img);
-  }, [images, myPrivateImages, imageId]);
+    const post =
+      posts.find((post) => post._id === postId) ||
+      myPrivatePosts.find((post) => post._id === postId);
+    if (post) setPost(post);
+  }, [posts, myPrivatePosts, postId]);
 
   useEffect(() => {
-    if (image && image._id === imageId) return;
+    if (post && post._id === postId) return;
     axiosInstance
-      .get(`/images/${imageId}`)
-      .then((result) => setImage(result.data))
+      .get(`/images/${postId}`)
+      .then((result) => setPost(result.data))
       .catch((err) => toast.error(err.response.data.message));
-  }, [imageId, image]);
+  }, [postId, post]);
 
   useEffect(() => {
-    if (me && image && image.likes.includes(me.userId)) setHasLiked(true);
-  }, [me, image]);
+    if (me && post && post.likes.includes(me.userId)) setHasLiked(true);
+  }, [me, post]);
 
-  if (!image) return <div>Loading...</div>;
+  if (!post) return <div>Loading...</div>;
 
-  const updateImage = (images: Image[], image: Image) =>
-    [...images.filter((image) => image._id !== imageId), image].sort((a, b) => {
+  const updatePost = (posts: Post[], post: Post) =>
+    [...posts.filter((post) => post._id !== postId), post].sort((a, b) => {
       if (a._id < b._id) return 1;
       else return -1;
     });
@@ -54,25 +54,29 @@ export default function ImageDetailPage() {
 
   //   setHasLiked((prev) => !prev);
   // };
+
   const likeHandler = async () => {
+    if (!me) {
+      toast.warn("로그인이 필요합니다.", { autoClose: 3000 });
+      return;
+    }
+
     try {
       const result = await axiosInstance.patch(
-        `/images/${imageId}/${hasLiked ? "unlike" : "like"}`
+        `/images/${postId}/${hasLiked ? "unlike" : "like"}`
       );
-      const updatedImage = result.data;
+      const updatedPost = result.data;
 
-      if (updatedImage.public) {
-        setImages((prevImages) => updateImage(prevImages, updatedImage));
-        if (!updatedImage.public)
-          setMyPrivateImages((prevImages) =>
-            prevImages.filter((img) => img._id !== updatedImage._id)
+      if (updatedPost.public) {
+        setPosts((prevPosts) => updatePost(prevPosts, updatedPost));
+        if (!updatedPost.public)
+          setMyPrivatePosts((prevPosts) =>
+            prevPosts.filter((post) => post._id !== updatedPost._id)
           );
       } else {
-        setMyPrivateImages((prevImages) =>
-          updateImage(prevImages, updatedImage)
-        );
-        setImages((prevImages) =>
-          prevImages.filter((img) => img._id !== updatedImage._id)
+        setMyPrivatePosts((prevPosts) => updatePost(prevPosts, updatedPost));
+        setPosts((prevPosts) =>
+          prevPosts.filter((post) => post._id !== updatedPost._id)
         );
       }
 
@@ -85,16 +89,16 @@ export default function ImageDetailPage() {
   const deleteHandler = async () => {
     try {
       if (!window.confirm("정말로 삭제하시겠습니까?")) return;
-      const result = await axiosInstance.delete(`/images/${imageId}`);
+      const result = await axiosInstance.delete(`/images/${postId}`);
       toast.success(result.data.message, { autoClose: 3000 });
 
-      if (image?.public) {
-        setImages((prevImages) =>
-          prevImages.filter((img) => img._id !== imageId)
+      if (post?.public) {
+        setPosts((prevPosts) =>
+          prevPosts.filter((post) => post._id !== postId)
         );
       } else {
-        setMyPrivateImages((prevImages) =>
-          prevImages.filter((img) => img._id !== imageId)
+        setMyPrivatePosts((prevPosts) =>
+          prevPosts.filter((post) => post._id !== postId)
         );
       }
 
@@ -105,34 +109,37 @@ export default function ImageDetailPage() {
   };
 
   const moveToLocation = () => {
-    if (!image?.position) {
+    if (!post?.position) {
       toast.error("위치 정보를 찾을 수 없습니다.");
       return;
     }
 
-    navigate("/", { state: { position: image.position } });
+    navigate("/", { state: { position: post.position } });
   };
 
   return (
     <div>
-      <h3>ImageDetailPage {imageId}</h3>
-      <img
-        style={{ width: "100%" }}
-        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
-        alt={`image-${imageId}`}
-      />
+      <h3>ImageDetailPage {postId}</h3>
+      {post.images.map((image) => (
+        <img
+          key={image._id}
+          style={{ width: "100%" }}
+          src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
+          alt={`image-${image._id}`}
+        />
+      ))}
       <LocationWrapper>
         <HiOutlineLocationMarker />
-        <LocationText>{image.location}</LocationText>
+        <LocationText>{post.location}</LocationText>
       </LocationWrapper>
-      <h2>{image.title}</h2>
-      <p>{image.description}</p>
-      <div>좋아요 {image.likes.length}</div>
+      <h2>{post.title}</h2>
+      <p>{post.description}</p>
+      <div>좋아요 {post.likes.length}</div>
       <button onClick={moveToLocation}>위치 보기</button>
       <button style={{ float: "right" }} onClick={likeHandler}>
         {hasLiked ? "좋아요 취소" : "좋아요"}
       </button>
-      {me && image.user._id === me.userId && (
+      {me && post.user._id === me.userId && (
         <button onClick={deleteHandler}>삭제</button>
       )}
     </div>

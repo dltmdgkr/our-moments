@@ -2,9 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { imageRouter } = require("./routes/imageRouter");
 const { userRouter } = require("./routes/userRouter");
 const { authenticate } = require("./middleware/authentication");
+const { postRouter } = require("./routes/postRouter");
 
 // deploy.yml test 주석
 
@@ -53,7 +53,7 @@ function setupRoutes(app) {
     res.send("Express 서버가 정상적으로 작동 중입니다!");
   });
   app.use("/users", userRouter);
-  app.use("/images", imageRouter);
+  app.use("/images", postRouter);
 }
 
 function setupErrorHandling(app) {

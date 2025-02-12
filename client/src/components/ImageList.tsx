@@ -1,24 +1,22 @@
 import { useContext } from "react";
-import { ImageContext } from "../context/ImageProvider";
 import { Link } from "react-router-dom";
 import "./ImageList.css";
-// import { AuthContext } from "../context/AuthProvider";
+import { PostContext } from "../context/PostProvider";
 
 export default function ImageList() {
   const {
-    images,
-    myPrivateImages,
+    posts,
+    myPrivatePosts,
     isPublic,
     setIsPublic,
-    loadMoreImages,
-    imageLoading,
-  } = useContext(ImageContext);
-  // const { me } = useContext(AuthContext);
+    loadMorePosts,
+    postLoading,
+  } = useContext(PostContext);
 
-  const imgList = (isPublic ? images : myPrivateImages).map((image, index) => (
-    <Link key={`${image.key}-${index}`} to={`/images/${image._id}`}>
+  const postList = (isPublic ? posts : myPrivatePosts).map((post, index) => (
+    <Link key={`${post._id}-${index}`} to={`/images/${post._id}`}>
       <img
-        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
+        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
         alt="업로드 이미지"
       />
     </Link>
@@ -33,14 +31,14 @@ export default function ImageList() {
         {(isPublic ? "개인" : "공개") + "사진 보기"}
       </button>
       <div className="image-list-container">
-        {imgList.length > 0
-          ? imgList
+        {postList.length > 0
+          ? postList
           : "사진을 추가하여 갤러리를 완성해보세요!"}
       </div>
-      {imageLoading ? (
+      {postLoading ? (
         <div>Loading...</div>
       ) : (
-        <button onClick={loadMoreImages}>Load More Images</button>
+        <button onClick={loadMorePosts}>Load More Posts</button>
       )}
     </>
   );

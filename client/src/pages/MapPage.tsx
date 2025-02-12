@@ -80,14 +80,15 @@ export default function MapPage() {
       markersRef.current.push(marker);
 
       kakao.maps.event.addListener(marker, "click", () => {
-        setSelectedMarker({
-          id: moment.id,
-          title: moment.title || "제목 없음",
-          position: moment.position,
-          address: moment.address || "주소 없음",
-        });
+        console.log("marker clicked!");
+        // setSelectedMarker({
+        //   id: moment.id,
+        //   title: moment.title || "제목 없음",
+        //   position: moment.position,
+        //   address: moment.address || "주소 없음",
+        // });
 
-        setSelectedPlaceId(moment.id);
+        // setSelectedPlaceId(moment.id);
       });
     });
   }, [map, moments]);

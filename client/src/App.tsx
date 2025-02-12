@@ -32,7 +32,7 @@ function App() {
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/images/:imageId" element={<ImageDetailPage />} />
+          <Route path="/images/:postId" element={<ImageDetailPage />} />
           <Route path="/upload" element={<UploadPage />} />
         </Routes>
       </MapMarkerProvider>

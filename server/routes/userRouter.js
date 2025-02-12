@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const userRouter = Router();
 const User = require("../models/User");
-const Image = require("../models/Image");
+const Post = require("../models/Post");
 const { hash, compare } = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 
@@ -99,7 +99,7 @@ userRouter.get("/me/images", async (req, res) => {
       throw new Error("invalid lastId");
     if (!req.user) throw new Error("권한이 없습니다.");
 
-    const images = await Image.find(
+    const posts = await Post.find(
       lastId
         ? {
             "user._id": req.user.id,
@@ -114,7 +114,7 @@ userRouter.get("/me/images", async (req, res) => {
       .sort({ _id: -1 })
       .limit(20);
 
-    res.json(images);
+    res.json(posts);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: err.message });
