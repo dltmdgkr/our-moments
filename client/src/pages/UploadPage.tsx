@@ -1,3 +1,4 @@
+import BackButton from "../components/BackButton";
 import UploadForm from "../components/UploadForm";
 import { useMapMarker } from "../context/MapMarkerContext";
 
@@ -6,6 +7,7 @@ export default function UploadPage() {
 
   return (
     <div>
+      <BackButton />
       <h1>업로드 페이지</h1>
       {selectedMarker && (
         <div>

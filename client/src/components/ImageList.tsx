@@ -2,8 +2,10 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import "./ImageList.css";
 import { PostContext } from "../context/PostProvider";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function ImageList() {
+  const { me } = useContext(AuthContext);
   const {
     posts,
     myPrivatePosts,
@@ -12,6 +14,14 @@ export default function ImageList() {
     loadMorePosts,
     postLoading,
   } = useContext(PostContext);
+
+  const handleTogglePublic = () => {
+    if (!me) {
+      alert("로그인 후 이용해주세요!");
+      return;
+    }
+    setIsPublic((prev) => !prev);
+  };
 
   const postList = (isPublic ? posts : myPrivatePosts).map((post, index) => (
     <Link key={`${post._id}-${index}`} to={`/images/${post._id}`}>
@@ -27,7 +37,7 @@ export default function ImageList() {
       <h3 style={{ display: "inline-block", marginRight: 10 }}>
         Image List {isPublic ? "공개" : "개인"} 사진
       </h3>
-      <button onClick={() => setIsPublic((prev) => !prev)}>
+      <button onClick={handleTogglePublic}>
         {(isPublic ? "개인" : "공개") + "사진 보기"}
       </button>
       <div className="image-list-container">

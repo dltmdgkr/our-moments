@@ -9,8 +9,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "../hooks/useMap";
 import { useMapMarker } from "../context/MapMarkerContext";
 import { axiosInstance } from "../utils/axiosInstance";
+import { getCurrentLocation } from "../utils/getCurrentLocation";
+import HamburgerButton from "../components/HamburgerButton";
 
-export default function MapPage() {
+export default function MapPage({ showModal }: { showModal: () => void }) {
   const location = useLocation();
   const { position } = location.state || {};
 
@@ -171,74 +173,8 @@ export default function MapPage() {
   }, [map]);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const userPosition = new kakao.maps.LatLng(latitude, longitude);
-
-          const imageSrc = "/current_location_icon.png";
-          const imageSize = new kakao.maps.Size(32, 32);
-          const imageOption = { offset: new kakao.maps.Point(10, 10) };
-
-          const markerImage = new kakao.maps.MarkerImage(
-            imageSrc,
-            imageSize,
-            imageOption
-          );
-          const marker = new kakao.maps.Marker({
-            position: userPosition,
-            image: markerImage,
-          });
-
-          if (map) {
-            marker.setMap(map);
-            map.setCenter(userPosition);
-            map.setLevel(4, { animate: true });
-          }
-        },
-        (error) => console.error("Geolocation error:", error),
-        { enableHighAccuracy: true }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
+    getCurrentLocation(map);
   }, [map]);
-
-  const handleMyLocationClick = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const userPosition = new kakao.maps.LatLng(latitude, longitude);
-
-          const imageSrc = "/current_location_icon.png";
-          const imageSize = new kakao.maps.Size(32, 32);
-          const imageOption = { offset: new kakao.maps.Point(10, 10) };
-
-          const markerImage = new kakao.maps.MarkerImage(
-            imageSrc,
-            imageSize,
-            imageOption
-          );
-          const marker = new kakao.maps.Marker({
-            position: userPosition,
-            image: markerImage,
-          });
-
-          if (map) {
-            marker.setMap(map);
-            map.setCenter(userPosition);
-            map.setLevel(4, { animate: true });
-          }
-        },
-        (error) => console.error("Failed to get location:", error),
-        { enableHighAccuracy: true }
-      );
-    } else {
-      alert("현재 위치를 지원하지 않는 브라우저입니다.");
-    }
-  };
 
   const handleUploadClick = () => {
     if (!selectedPlaceId) {
@@ -250,6 +186,7 @@ export default function MapPage() {
 
   return (
     <div>
+      <HamburgerButton showModal={showModal} position={"absolute"} />
       <HiOutlinePlusSm
         onClick={handleUploadClick}
         style={{
@@ -281,7 +218,7 @@ export default function MapPage() {
         }}
       />
       <MdMyLocation
-        onClick={handleMyLocationClick}
+        onClick={() => getCurrentLocation(map)}
         style={{
           position: "absolute",
           bottom: "20px",

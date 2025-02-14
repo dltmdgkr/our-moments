@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axiosInstance";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import styled from "styled-components";
-import { Image, Post, PostContext } from "../context/PostProvider";
+import { Post, PostContext } from "../context/PostProvider";
+import BackButton from "../components/BackButton";
 
 export default function ImageDetailPage() {
   const navigate = useNavigate();
@@ -119,6 +120,7 @@ export default function ImageDetailPage() {
 
   return (
     <div>
+      <BackButton />
       <h3>ImageDetailPage {postId}</h3>
       {post.images.map((image) => (
         <img

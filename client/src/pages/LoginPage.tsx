@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/axiosInstance";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AxiosError } from "axios";
+import HamburgerButton from "../components/HamburgerButton";
 
-export default function LoginPage() {
+export default function LoginPage({ showModal }: { showModal: () => void }) {
   const { setMe } = useContext(AuthContext);
   const navigate = useNavigate();
   const {
@@ -46,6 +47,7 @@ export default function LoginPage() {
 
   return (
     <>
+      <HamburgerButton showModal={showModal} position={"sticky"} />
       <h2>로그인</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>

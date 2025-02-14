@@ -4,19 +4,26 @@ import "react-toastify/dist/ReactToastify.css";
 import GalleryPage from "./pages/GalleryPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
-import NavBar from "./components/NavBar";
 import ImageDetailPage from "./pages/ImageDetailPage";
 import KakaoMapScriptLoader from "./map/KakaoMapScriptLoader";
 import MapPage from "./pages/MapPage";
 import UploadPage from "./pages/UploadPage";
 import { MapMarkerProvider } from "./context/MapMarkerContext";
 import DynamicMap from "./map/DynamicMap";
+import { useState } from "react";
+import { MenuModal } from "./components/MenuModal";
 
 function App() {
+  const [openModal, setOpenModal] = useState(false);
+
+  const showModal = () => {
+    setOpenModal((prev) => !prev);
+  };
+
   return (
     <>
       <MapMarkerProvider>
-        <NavBar />
+        <MenuModal openModal={openModal} setOpenModal={setOpenModal} />
         <ToastContainer />
         <Routes>
           <Route
@@ -24,14 +31,20 @@ function App() {
             element={
               <KakaoMapScriptLoader>
                 <DynamicMap>
-                  <MapPage />
+                  <MapPage showModal={showModal} />
                 </DynamicMap>
               </KakaoMapScriptLoader>
             }
           />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/gallery"
+            element={<GalleryPage showModal={showModal} />}
+          />
+          <Route
+            path="/signup"
+            element={<SignupPage showModal={showModal} />}
+          />
+          <Route path="/login" element={<LoginPage showModal={showModal} />} />
           <Route path="/images/:postId" element={<ImageDetailPage />} />
           <Route path="/upload" element={<UploadPage />} />
         </Routes>
