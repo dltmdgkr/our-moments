@@ -11,6 +11,9 @@ import { useMapMarker } from "../context/MapMarkerContext";
 import { axiosInstance } from "../utils/axiosInstance";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
 import HamburgerButton from "../components/HamburgerButton";
+import { Post } from "../context/PostProvider";
+import BottomCard from "../components/BottomCard";
+import { useMomentMarker } from "../context/MomentMarkerContext";
 
 export default function MapPage({ showModal }: { showModal: () => void }) {
   const location = useLocation();
@@ -22,10 +25,11 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   const navigate = useNavigate();
   const map = useMap();
   const { setSelectedMarker } = useMapMarker();
+  const { selectedMomentMarker, setSelectedMomentMarker } = useMomentMarker();
   const markerRef = useRef<kakao.maps.Marker | null>(null);
   const overlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
 
-  const [moments, setMoments] = useState<PlaceType[]>([]);
+  const [moments, setMoments] = useState<Post[]>([]);
   const markersRef = useRef<kakao.maps.Marker[]>([]);
 
   useEffect(() => {
@@ -83,18 +87,32 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
       markersRef.current.push(marker);
 
       kakao.maps.event.addListener(marker, "click", () => {
-        console.log("marker clicked!");
-        // setSelectedMarker({
-        //   id: moment.id,
-        //   title: moment.title || "제목 없음",
-        //   position: moment.position,
-        //   address: moment.address || "주소 없음",
-        // });
+        map.setCenter(markerPosition);
+        map.setLevel(4, { animate: true });
 
-        // setSelectedPlaceId(moment.id);
+        setSelectedMomentMarker({
+          _id: moment._id,
+          title: moment.title,
+          position: moment.position,
+          location: moment.location,
+          images: moment.images || [],
+          description: moment.description,
+          likes: moment.likes,
+          user: moment.user,
+          createdAt: moment.createdAt,
+          public: moment.public,
+        });
       });
     });
   }, [map, moments]);
+
+  useEffect(() => {
+    if (selectedMomentMarker && markerRef.current && overlayRef.current) {
+      markerRef.current.setMap(null);
+      overlayRef.current.setMap(null);
+      setSelectedPlaceId("");
+    }
+  }, [selectedMomentMarker]);
 
   useEffect(() => {
     if (!map) return;
@@ -160,6 +178,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
             });
 
             setSelectedPlaceId("clicked_marker");
+            setSelectedMomentMarker(null);
           }
         }
       );
@@ -172,16 +191,17 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
     };
   }, [map]);
 
-  useEffect(() => {
-    getCurrentLocation(map);
-  }, [map]);
-
   const handleUploadClick = () => {
     if (!selectedPlaceId) {
       alert("위치를 먼저 선택해주세요!");
       return;
     }
     navigate("/upload");
+  };
+
+  const handleCurrentLocationClick = () => {
+    getCurrentLocation(map);
+    setSelectedMomentMarker(null);
   };
 
   return (
@@ -218,7 +238,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
         }}
       />
       <MdMyLocation
-        onClick={() => getCurrentLocation(map)}
+        onClick={handleCurrentLocationClick}
         style={{
           position: "absolute",
           bottom: "20px",
@@ -239,7 +259,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
           left: "0",
           backgroundColor: "rgba(255, 255, 255, 0.8)",
           height: "100%",
-          zIndex: 1,
+          zIndex: 3,
           overflowY: "auto",
         }}
       >
@@ -258,6 +278,10 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
           />
         )}
       </div>
+      <BottomCard
+        selectedMomentMarker={selectedMomentMarker}
+        setSelectedMomentMarker={setSelectedMomentMarker}
+      />
     </div>
   );
 }

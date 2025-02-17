@@ -89,7 +89,7 @@ export const MenuModal = ({ openModal, setOpenModal }: MenuModalProps) => {
 const Wrapper = styled.div`
   width: 100%;
   position: fixed;
-  z-index: 1023;
+  z-index: 7;
   height: 100vh;
   background: rgba(173, 175, 179, 0.5);
   cursor: pointer;

@@ -12,6 +12,7 @@ import { MapMarkerProvider } from "./context/MapMarkerContext";
 import DynamicMap from "./map/DynamicMap";
 import { useState } from "react";
 import { MenuModal } from "./components/MenuModal";
+import { MomentMarkerProvider } from "./context/MomentMarkerContext";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
@@ -23,31 +24,36 @@ function App() {
   return (
     <>
       <MapMarkerProvider>
-        <MenuModal openModal={openModal} setOpenModal={setOpenModal} />
-        <ToastContainer />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <KakaoMapScriptLoader>
-                <DynamicMap>
-                  <MapPage showModal={showModal} />
-                </DynamicMap>
-              </KakaoMapScriptLoader>
-            }
-          />
-          <Route
-            path="/gallery"
-            element={<GalleryPage showModal={showModal} />}
-          />
-          <Route
-            path="/signup"
-            element={<SignupPage showModal={showModal} />}
-          />
-          <Route path="/login" element={<LoginPage showModal={showModal} />} />
-          <Route path="/images/:postId" element={<ImageDetailPage />} />
-          <Route path="/upload" element={<UploadPage />} />
-        </Routes>
+        <MomentMarkerProvider>
+          <MenuModal openModal={openModal} setOpenModal={setOpenModal} />
+          <ToastContainer />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <KakaoMapScriptLoader>
+                  <DynamicMap>
+                    <MapPage showModal={showModal} />
+                  </DynamicMap>
+                </KakaoMapScriptLoader>
+              }
+            />
+            <Route
+              path="/gallery"
+              element={<GalleryPage showModal={showModal} />}
+            />
+            <Route
+              path="/signup"
+              element={<SignupPage showModal={showModal} />}
+            />
+            <Route
+              path="/login"
+              element={<LoginPage showModal={showModal} />}
+            />
+            <Route path="/images/:postId" element={<ImageDetailPage />} />
+            <Route path="/upload" element={<UploadPage />} />
+          </Routes>
+        </MomentMarkerProvider>
       </MapMarkerProvider>
     </>
   );
