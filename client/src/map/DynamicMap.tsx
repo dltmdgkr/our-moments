@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import "./DynamicMap.css";
 import { kakaoMapContext } from "../hooks/useMap";
+import styled from "styled-components";
 
 export default function DynamicMap({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<kakao.maps.Map>();
@@ -20,9 +20,9 @@ export default function DynamicMap({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div className="container">
-        <div ref={kakaoMapRef} className="map" />
-      </div>
+      <Container>
+        <Map ref={kakaoMapRef} />
+      </Container>
       {map ? (
         <kakaoMapContext.Provider value={map}>
           {children}
@@ -33,3 +33,13 @@ export default function DynamicMap({ children }: { children: ReactNode }) {
     </>
   );
 }
+
+const Container = styled.div`
+  width: 100%;
+  height: 100vh;
+`;
+
+const Map = styled.div`
+  width: 100%;
+  height: 100%;
+`;

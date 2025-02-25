@@ -14,6 +14,7 @@ import HamburgerButton from "../components/HamburgerButton";
 import { Post } from "../context/PostProvider";
 import BottomCard from "../components/BottomCard";
 import { useMomentMarker } from "../context/MomentMarkerContext";
+import styled from "styled-components";
 
 export default function MapPage({ showModal }: { showModal: () => void }) {
   const location = useLocation();
@@ -207,62 +208,16 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   return (
     <div>
       <HamburgerButton showModal={showModal} position={"absolute"} />
-      <HiOutlinePlusSm
-        onClick={handleUploadClick}
-        style={{
-          position: "absolute",
-          bottom: "140px",
-          right: "20px",
-          fontSize: "24px",
-          backgroundColor: "white",
-          padding: "10px",
-          borderRadius: "50%",
-          cursor: "pointer",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-          zIndex: 2,
-        }}
-      />
-      <IoSearch
-        onClick={() => setToggle((prev) => !prev)}
-        style={{
-          position: "absolute",
-          bottom: "80px",
-          right: "20px",
-          fontSize: "24px",
-          backgroundColor: "white",
-          padding: "10px",
-          borderRadius: "50%",
-          cursor: "pointer",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-          zIndex: 2,
-        }}
-      />
-      <MdMyLocation
-        onClick={handleCurrentLocationClick}
-        style={{
-          position: "absolute",
-          bottom: "20px",
-          right: "20px",
-          fontSize: "24px",
-          backgroundColor: "white",
-          padding: "10px",
-          borderRadius: "50%",
-          cursor: "pointer",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-          zIndex: 2,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: "0",
-          left: "0",
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
-          height: "100%",
-          zIndex: 3,
-          overflowY: "auto",
-        }}
-      >
+      <FloatingButton bottom="140px">
+        <HiOutlinePlusSm onClick={handleUploadClick} />
+      </FloatingButton>
+      <FloatingButton bottom="80px">
+        <IoSearch onClick={() => setToggle((prev) => !prev)} />
+      </FloatingButton>
+      <FloatingButton bottom="20px">
+        <MdMyLocation onClick={handleCurrentLocationClick} />
+      </FloatingButton>
+      <OverlayWrapper>
         <MapMarkerController
           places={places}
           selectedPlaceId={selectedPlaceId}
@@ -277,7 +232,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
             }}
           />
         )}
-      </div>
+      </OverlayWrapper>
       <BottomCard
         selectedMomentMarker={selectedMomentMarker}
         setSelectedMomentMarker={setSelectedMomentMarker}
@@ -285,3 +240,29 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
     </div>
   );
 }
+
+const FloatingButton = styled.div<{ bottom: string }>`
+  position: absolute;
+  bottom: ${(props) => props.bottom};
+  right: 20px;
+  font-size: 24px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const OverlayWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  height: 100%;
+  z-index: 3;
+  overflow-y: auto;
+`;

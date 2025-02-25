@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import "./ImageList.css";
+import styled from "styled-components";
 import { PostContext } from "../context/PostProvider";
 import { AuthContext } from "../context/AuthProvider";
 
@@ -25,7 +25,7 @@ export default function ImageList() {
 
   const postList = (isPublic ? posts : myPrivatePosts).map((post, index) => (
     <Link key={`${post._id}-${index}`} to={`/images/${post._id}`}>
-      <img
+      <StyledImage
         src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
         alt="업로드 이미지"
       />
@@ -34,22 +34,71 @@ export default function ImageList() {
 
   return (
     <>
-      <h3 style={{ display: "inline-block", marginRight: 10 }}>
-        Image List {isPublic ? "공개" : "개인"} 사진
-      </h3>
-      <button onClick={handleTogglePublic}>
+      <Title>Image List {isPublic ? "공개" : "개인"} 사진</Title>
+      <ToggleButton onClick={handleTogglePublic}>
         {(isPublic ? "개인" : "공개") + "사진 보기"}
-      </button>
-      <div className="image-list-container">
+      </ToggleButton>
+      <ImageListContainer>
         {postList.length > 0
           ? postList
           : "사진을 추가하여 갤러리를 완성해보세요!"}
-      </div>
+      </ImageListContainer>
       {postLoading ? (
         <div>Loading...</div>
       ) : (
-        <button onClick={loadMorePosts}>Load More Posts</button>
+        <LoadMoreButton onClick={loadMorePosts}>Load More Posts</LoadMoreButton>
       )}
     </>
   );
 }
+
+const Title = styled.h3`
+  display: inline-block;
+  margin-right: 10px;
+`;
+
+const ToggleButton = styled.button`
+  cursor: pointer;
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  font-size: 14px;
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ImageListContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const StyledImage = styled.img`
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  transition: opacity 0.2s, box-shadow 0.2s;
+  &:hover {
+    box-shadow: 4px 4px 4px grey;
+    opacity: 0.7;
+    cursor: pointer;
+  }
+`;
+
+const LoadMoreButton = styled.button`
+  cursor: pointer;
+  padding: 8px 12px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-top: 10px;
+  &:hover {
+    background-color: #218838;
+  }
+`;

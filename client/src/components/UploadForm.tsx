@@ -6,9 +6,9 @@ import {
   useRef,
   useState,
 } from "react";
+import styled from "styled-components";
 import ProgressBar from "./ProgressBar";
 import { toast } from "react-toastify";
-import "./UploadForm.css";
 import { axiosInstance } from "../utils/axiosInstance";
 import axios from "axios";
 import { PlaceType } from "../map/mapTypes";
@@ -168,118 +168,109 @@ export default function UploadForm({
     }
   };
 
-  // const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!files) {
-  //     console.error("선택된 파일이 없습니다.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-
-  //   for (let file of files) formData.append("image", file);
-  //   formData.append("public", isPublic.toString());
-
-  //   try {
-  //     const res = await axios.post("/images", formData, {
-  //       headers: { "content-type": "multipart/form-data" },
-  //       onUploadProgress: (e) => {
-  //         setPercent(Math.round((100 * e.loaded) / e.total!));
-  //       },
-  //     });
-
-  //     if (isPublic) {
-  //       setImages((prevData) => [...res.data, ...prevData]);
-  //     } else {
-  //       setMyPrivateImages((prevData) => [...res.data, ...prevData]);
-  //     }
-
-  //     toast.success("이미지가 성공적으로 업로드되었습니다!", {
-  //       autoClose: 3000,
-  //     });
-
-  //     setTimeout(() => {
-  //       setPercent(0);
-  //       setPreviews([]);
-  //     }, 3000);
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("이미지 업로드에 실패했습니다.");
-  //     setPercent(0);
-  //     setPreviews([]);
-  //   }
-  // };
-
-  const previewImages = previews.map((preview, index) => (
-    <div key={index}>
-      <img
-        src={preview.imgSrc as string}
-        alt="사진첩 이미지 미리보기"
-        className={`image-preview ${preview.imgSrc && "image-preview-show"}`}
-        style={{ width: 200, height: 200, objectFit: "cover" }}
-      />
-      <ProgressBar percent={percent[index]} />
-    </div>
-  ));
-
-  const fileName =
-    previewImages.length === 0
-      ? "이미지 파일을 업로드 해주세요."
-      : previews.reduce(
-          (previous, current) => previous + `${current.fileName}, `,
-          ""
-        );
-
   return (
-    <form
-      onSubmit={onSubmit}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <input
+    <FormContainer onSubmit={onSubmit}>
+      <Input
         type="text"
         placeholder="제목을 입력하세요"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <textarea
+      <TextArea
         placeholder="내용을 입력하세요"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          flexWrap: "wrap",
-        }}
-      >
-        {previewImages}
-      </div>
-      <div className="file-dropper">
-        {fileName}
-        <input
+      <PreviewContainer>
+        {previews.map((preview, index) => (
+          <ImageWrapper key={index}>
+            <ImagePreview src={preview.imgSrc as string} alt="사진 미리보기" />
+            <ProgressBar percent={percent[index]} />
+          </ImageWrapper>
+        ))}
+      </PreviewContainer>
+      <FileDropper>
+        {previews.length === 0
+          ? "이미지 파일을 업로드 해주세요."
+          : previews.map((p) => p.fileName).join(", ")}
+        <FileInput
           ref={inputRef}
-          id="image"
           type="file"
           multiple
           accept="image/*"
           onChange={imageSelectHandler}
         />
-      </div>
-      <input
-        type="checkbox"
-        id="public-check"
-        checked={!isPublic}
-        onChange={() => setIsPublic((prev) => !prev)}
-      />
-      <label htmlFor="public-check">비공개</label>
-      <button type="submit" className="submit-btn">
-        제출
-      </button>
-    </form>
+      </FileDropper>
+      <Label>
+        비공개
+        <input
+          type="checkbox"
+          checked={!isPublic}
+          onChange={() => setIsPublic((prev) => !prev)}
+        />
+      </Label>
+      <SubmitButton type="submit">제출</SubmitButton>
+    </FormContainer>
   );
 }
+
+const FormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  margin-bottom: 10px;
+`;
+
+const TextArea = styled.textarea`
+  padding: 10px;
+  margin-bottom: 10px;
+`;
+
+const FileDropper = styled.div`
+  border: 1px dashed black;
+  height: 200px;
+  background-color: bisque;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`;
+
+const FileInput = styled.input`
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+`;
+
+const PreviewContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const ImageWrapper = styled.div`
+  text-align: center;
+`;
+
+const ImagePreview = styled.img`
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+`;
+
+const SubmitButton = styled.button`
+  height: 40px;
+  cursor: pointer;
+`;
+
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;

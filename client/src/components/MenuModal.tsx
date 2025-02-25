@@ -102,6 +102,9 @@ const Lists = styled(motion.ul)`
   color: #000;
   display: flex;
   flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 `;
 
 const List = styled.li`

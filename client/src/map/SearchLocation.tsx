@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import "./SearchLocation.css";
+import styled from "styled-components";
 import { useMap } from "../hooks/useMap";
 import { PlaceType } from "./mapTypes";
 import { useMapMarker } from "../context/MapMarkerContext";
@@ -25,7 +25,7 @@ export default function SearchLocation(props: SearchLocationProps) {
   const searchPlaces = (keyword: string) => {
     if (!placeService.current) return;
 
-    if (!keyword.replace(/^\s+|\s+$/g, "")) {
+    if (!keyword.trim()) {
       alert("키워드를 입력해주세요!");
       return;
     }
@@ -48,10 +48,8 @@ export default function SearchLocation(props: SearchLocationProps) {
         setPlaces(placeInfos);
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
         alert("검색 결과가 존재하지 않습니다.");
-        return;
       } else if (status === kakao.maps.services.Status.ERROR) {
         alert("검색 결과 중 오류가 발생했습니다.");
-        return;
       }
     });
   };
@@ -69,25 +67,58 @@ export default function SearchLocation(props: SearchLocationProps) {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
+    <Container>
+      <StyledForm onSubmit={handleSubmit}>
+        <StyledInput
           value={keyword}
-          onChange={(e) => {
-            setKeyword(e.target.value);
-          }}
+          onChange={(e) => setKeyword(e.target.value)}
         />
-      </form>
-      <ul>
-        {places.map((item, index) => {
-          return (
-            <li key={item.id} onClick={() => handleItemClick(item)}>
-              <span>{`${index + 1}. ${item.title}`}</span>
-              <span>{item.address}</span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+      </StyledForm>
+      <StyledList>
+        {places.map((item, index) => (
+          <StyledListItem key={item.id} onClick={() => handleItemClick(item)}>
+            <span>{`${index + 1}. ${item.title}`}</span>
+            <span>{item.address}</span>
+          </StyledListItem>
+        ))}
+      </StyledList>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  width: 100%;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  position: sticky;
+  top: 0;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
+  min-width: 150px;
+  padding: 8px;
+  border: 1px solid #c0c0c0;
+`;
+
+const StyledList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const StyledListItem = styled.li`
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border-bottom: 1px dashed #d2d2d2;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d2d2d2;
+    opacity: 1;
+    transition: background-color 0s;
+  }
+`;
