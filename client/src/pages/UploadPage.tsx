@@ -1,6 +1,6 @@
 import BackButton from "../components/BackButton";
 import UploadForm from "../components/UploadForm";
-import { useMapMarker } from "../context/MapMarkerContext";
+import { useMapMarker } from "../context/MapMarkerProvider";
 
 export default function UploadPage() {
   const { selectedMarker, setSelectedMarker } = useMapMarker();

@@ -1,21 +1,35 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { getAndMarkUserLocation } from "../utils/getAndMarkUserLocation";
 import { kakaoMapContext } from "../hooks/useMap";
 import styled from "styled-components";
 
 export default function DynamicMap({ children }: { children: ReactNode }) {
-  const [map, setMap] = useState<kakao.maps.Map>();
-  const kakaoMapRef = useRef(null);
+  const [map, setMap] = useState<kakao.maps.Map | null>(null);
+  const kakaoMapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!kakaoMapRef.current) return;
+    const initializeMap = async () => {
+      if (!kakaoMapRef.current) return;
+      try {
+        const userPosition = await getAndMarkUserLocation(null);
+        const lat = userPosition?.getLat() ?? 33.450701;
+        const lng = userPosition?.getLng() ?? 126.570667;
 
-    const targetPoint = new kakao.maps.LatLng(33.450701, 126.570667);
-    const options = {
-      center: targetPoint,
-      level: 3,
+        const targetPoint = new kakao.maps.LatLng(lat, lng);
+        const options = {
+          center: targetPoint,
+          level: 3,
+        };
+
+        const newMap = new kakao.maps.Map(kakaoMapRef.current, options);
+        setMap(newMap);
+        await getAndMarkUserLocation(newMap);
+      } catch (error) {
+        console.error("위치 정보를 가져오는데 실패했습니다.", error);
+      }
     };
 
-    setMap(new kakao.maps.Map(kakaoMapRef.current, options));
+    initializeMap();
   }, []);
 
   return (

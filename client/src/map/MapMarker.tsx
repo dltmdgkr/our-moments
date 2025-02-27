@@ -3,7 +3,7 @@ import { PlaceType } from "./mapTypes";
 import { useMap } from "../hooks/useMap";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import { useMapMarker } from "../context/MapMarkerContext";
+import { useMapMarker } from "../context/MapMarkerProvider";
 
 const MARKER_IMAGE_URL =
   "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png";
@@ -30,7 +30,7 @@ export default function MapMarker({
       content: container.current,
       map: map,
     });
-  }, []);
+  }, [map, place.position]);
 
   const marker = useMemo(() => {
     const imageSize = new kakao.maps.Size(36, 37); // 마커 이미지의 크기
@@ -60,7 +60,7 @@ export default function MapMarker({
     });
 
     return marker;
-  }, []);
+  }, [map, place, setSelectedMarker, index, infoWindow]);
 
   useLayoutEffect(() => {
     marker.setMap(map);
@@ -68,7 +68,7 @@ export default function MapMarker({
     return () => {
       marker.setMap(null);
     };
-  }, [map]);
+  }, [map, marker]);
 
   useEffect(() => {
     if (showInfo) {
@@ -79,7 +79,7 @@ export default function MapMarker({
     return () => {
       infoWindow.setMap(null);
     };
-  }, [showInfo]);
+  }, [showInfo, infoWindow, map]);
 
   return container.current
     ? ReactDOM.createPortal(

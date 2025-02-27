@@ -13,6 +13,7 @@ import { axiosInstance } from "../utils/axiosInstance";
 import axios from "axios";
 import { PlaceType } from "../map/mapTypes";
 import { PostContext } from "../context/PostProvider";
+import { useNavigate } from "react-router-dom";
 
 interface Preview {
   imgSrc: string | ArrayBuffer | null;
@@ -39,6 +40,7 @@ export default function UploadForm({
     null
   );
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedMarker) {
@@ -154,7 +156,9 @@ export default function UploadForm({
         setDescription("");
         setPercent([]);
         setPreviews([]);
+        setIsPublic(true);
         if (inputRef.current) inputRef.current.value = "";
+        navigate("/", { state: { position } });
       }, 3000);
     } catch (err) {
       console.error(err);
@@ -164,6 +168,7 @@ export default function UploadForm({
       setDescription("");
       setPercent([]);
       setPreviews([]);
+      setIsPublic(true);
       if (inputRef.current) inputRef.current.value = "";
     }
   };

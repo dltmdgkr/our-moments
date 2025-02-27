@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MomentMarkerContextType } from "../context/MomentMarkerContext";
+import { MomentMarkerContextType } from "../context/MomentMarkerProvider";
 import { GrNext } from "react-icons/gr";
 import styled from "styled-components";
 

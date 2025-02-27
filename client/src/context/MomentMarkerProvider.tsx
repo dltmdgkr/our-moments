@@ -10,11 +10,11 @@ const MomentMarkerContext = createContext<MomentMarkerContextType | undefined>(
   undefined
 );
 
-export const MomentMarkerProvider = ({
+export default function MomentMarkerProvider({
   children,
 }: {
   children: React.ReactNode;
-}) => {
+}) {
   const [selectedMomentMarker, setSelectedMomentMarker] = useState<Post | null>(
     null
   );
@@ -26,7 +26,7 @@ export const MomentMarkerProvider = ({
       {children}
     </MomentMarkerContext.Provider>
   );
-};
+}
 
 export const useMomentMarker = () => {
   const context = useContext(MomentMarkerContext);

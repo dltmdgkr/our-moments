@@ -8,11 +8,11 @@ import ImageDetailPage from "./pages/ImageDetailPage";
 import KakaoMapScriptLoader from "./map/KakaoMapScriptLoader";
 import MapPage from "./pages/MapPage";
 import UploadPage from "./pages/UploadPage";
-import { MapMarkerProvider } from "./context/MapMarkerContext";
 import DynamicMap from "./map/DynamicMap";
 import { useState } from "react";
 import { MenuModal } from "./components/MenuModal";
-import { MomentMarkerProvider } from "./context/MomentMarkerContext";
+import MapMarkerProvider from "./context/MapMarkerProvider";
+import MomentMarkerProvider from "./context/MomentMarkerProvider";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);

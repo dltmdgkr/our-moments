@@ -10,11 +10,11 @@ const MapMarkerContext = createContext<MarkerContextType | undefined>(
   undefined
 );
 
-export const MapMarkerProvider = ({
+export default function MapMarkerProvider({
   children,
 }: {
   children: React.ReactNode;
-}) => {
+}) {
   const [selectedMarker, setSelectedMarker] = useState<PlaceType | null>(null);
 
   return (
@@ -22,7 +22,7 @@ export const MapMarkerProvider = ({
       {children}
     </MapMarkerContext.Provider>
   );
-};
+}
 
 export const useMapMarker = () => {
   const context = useContext(MapMarkerContext);

@@ -2,7 +2,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useMap } from "../hooks/useMap";
 import { PlaceType } from "./mapTypes";
-import { useMapMarker } from "../context/MapMarkerContext";
+import { useMapMarker } from "../context/MapMarkerProvider";
+import { useMomentMarker } from "../context/MomentMarkerProvider";
 
 interface SearchLocationProps {
   onUpdatePlaces: (places: PlaceType[]) => void;
@@ -15,6 +16,7 @@ export default function SearchLocation(props: SearchLocationProps) {
   const [places, setPlaces] = useState<PlaceType[]>([]);
   const placeService = useRef<kakao.maps.services.Places | null>(null);
   const { setSelectedMarker } = useMapMarker();
+  const { setSelectedMomentMarker } = useMomentMarker();
 
   useEffect(() => {
     if (placeService.current) return;
@@ -57,6 +59,7 @@ export default function SearchLocation(props: SearchLocationProps) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     searchPlaces(keyword);
+    setSelectedMomentMarker(null);
   };
 
   const handleItemClick = (place: PlaceType) => {

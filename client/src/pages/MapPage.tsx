@@ -7,14 +7,15 @@ import { IoSearch } from "react-icons/io5";
 import { MdMyLocation } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "../hooks/useMap";
-import { useMapMarker } from "../context/MapMarkerContext";
+import { useMapMarker } from "../context/MapMarkerProvider";
+import { moveToCurrentLocation } from "../utils/moveToCurrentLocation";
 import { axiosInstance } from "../utils/axiosInstance";
-import { getCurrentLocation } from "../utils/getCurrentLocation";
 import HamburgerButton from "../components/HamburgerButton";
 import { Post } from "../context/PostProvider";
 import BottomCard from "../components/BottomCard";
-import { useMomentMarker } from "../context/MomentMarkerContext";
+import { useMomentMarker } from "../context/MomentMarkerProvider";
 import styled from "styled-components";
+import { extractLatLng } from "../utils/extractLatLng";
 
 export default function MapPage({ showModal }: { showModal: () => void }) {
   const location = useLocation();
@@ -47,21 +48,27 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   }, []);
 
   useEffect(() => {
+    if (!map || !selectedMomentMarker?.position) return;
+
+    let targetPoint: kakao.maps.LatLng | null = null;
+
+    if (selectedMomentMarker.position) {
+      const { lat, lng } = extractLatLng(selectedMomentMarker.position);
+      targetPoint = new kakao.maps.LatLng(lat, lng);
+    }
+
+    if (targetPoint) {
+      map.setCenter(targetPoint);
+    }
+  }, []);
+
+  useEffect(() => {
     if (position && map) {
       const moveLatLon = new kakao.maps.LatLng(position.lat, position.lng);
       map.setCenter(moveLatLon);
       map.setLevel(4, { animate: true });
     }
   }, [position, map]);
-
-  const getLatLng = (
-    position: kakao.maps.LatLng | { lat: number; lng: number }
-  ) => {
-    if (position instanceof kakao.maps.LatLng) {
-      return { lat: position.getLat(), lng: position.getLng() };
-    }
-    return { lat: position.lat, lng: position.lng };
-  };
 
   useEffect(() => {
     if (!map || moments.length === 0) return;
@@ -72,7 +79,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
     moments.forEach((moment) => {
       if (!moment.position) return;
 
-      const { lat, lng } = getLatLng(moment.position);
+      const { lat, lng } = extractLatLng(moment.position);
       const markerPosition = new kakao.maps.LatLng(lat, lng);
 
       const imageSrc = "/moment_marker.gif";
@@ -105,7 +112,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
         });
       });
     });
-  }, [map, moments]);
+  }, [map, moments, setSelectedMomentMarker]);
 
   useEffect(() => {
     if (selectedMomentMarker && markerRef.current && overlayRef.current) {
@@ -190,7 +197,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
     return () => {
       kakao.maps.event.removeListener(map, "click", handleMapClick);
     };
-  }, [map]);
+  }, [map, setSelectedMarker, setSelectedMomentMarker]);
 
   const handleUploadClick = () => {
     if (!selectedPlaceId) {
@@ -201,13 +208,15 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   };
 
   const handleCurrentLocationClick = () => {
-    getCurrentLocation(map);
+    moveToCurrentLocation(map);
     setSelectedMomentMarker(null);
   };
 
   return (
     <div>
-      <HamburgerButton showModal={showModal} position={"absolute"} />
+      {!toggle && (
+        <HamburgerButton showModal={showModal} position={"absolute"} />
+      )}
       <FloatingButton bottom="140px">
         <HiOutlinePlusSm onClick={handleUploadClick} />
       </FloatingButton>
@@ -217,7 +226,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
       <FloatingButton bottom="20px">
         <MdMyLocation onClick={handleCurrentLocationClick} />
       </FloatingButton>
-      <OverlayWrapper>
+      <OverlayWrapper toggle={toggle}>
         <MapMarkerController
           places={places}
           selectedPlaceId={selectedPlaceId}
@@ -257,11 +266,12 @@ const FloatingButton = styled.div<{ bottom: string }>`
   justify-content: center;
 `;
 
-const OverlayWrapper = styled.div`
+const OverlayWrapper = styled.div<{ toggle: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
   background-color: rgba(255, 255, 255, 0.8);
+  width: ${(props) => (props.toggle ? "25%" : "0")};
   height: 100%;
   z-index: 3;
   overflow-y: auto;
