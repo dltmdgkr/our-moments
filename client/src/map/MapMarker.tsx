@@ -12,13 +12,15 @@ export default function MapMarker({
   place,
   index,
   showInfo,
+  onSelect,
 }: {
   place: PlaceType;
   index: number;
   showInfo?: boolean;
+  onSelect: (placeId: string) => void;
 }) {
   const map = useMap();
-  const { setSelectedMarker } = useMapMarker();
+  const { selectedMarker, setSelectedMarker } = useMapMarker();
   const container = useRef(document.createElement("div"));
 
   const infoWindow = useMemo(() => {
@@ -33,11 +35,11 @@ export default function MapMarker({
   }, [map, place.position]);
 
   const marker = useMemo(() => {
-    const imageSize = new kakao.maps.Size(36, 37); // 마커 이미지의 크기
+    const imageSize = new kakao.maps.Size(36, 37);
     const imgOptions = {
-      spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
-      spriteOrigin: new kakao.maps.Point(0, index * 46 + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-      offset: new kakao.maps.Point(13, 37), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+      spriteSize: new kakao.maps.Size(36, 691),
+      spriteOrigin: new kakao.maps.Point(0, index * 46 + 10),
+      offset: new kakao.maps.Point(13, 37),
     };
     const markerImage = new kakao.maps.MarkerImage(
       MARKER_IMAGE_URL,
@@ -57,10 +59,17 @@ export default function MapMarker({
       });
       infoWindow.setMap(map);
       setSelectedMarker(place);
+      onSelect(place.id);
     });
 
     return marker;
   }, [map, place, setSelectedMarker, index, infoWindow]);
+
+  useEffect(() => {
+    if (selectedMarker && selectedMarker.position !== place.position) {
+      infoWindow.setMap(null);
+    }
+  }, [selectedMarker, place.position, infoWindow]);
 
   useLayoutEffect(() => {
     marker.setMap(map);
@@ -83,28 +92,48 @@ export default function MapMarker({
 
   return container.current
     ? ReactDOM.createPortal(
-        <Message
-          onClick={() => {
-            infoWindow.setMap(null);
-          }}
-        >
-          {place.title}
-        </Message>,
+        <InfoCard>
+          <Title>{place.title}</Title>
+          <Divider />
+          <Address>📍 {place.address}</Address>
+        </InfoCard>,
         container.current
       )
     : null;
 }
 
-const Message = styled.section`
+const InfoCard = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  width: 220px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  font-family: "Arial", sans-serif;
+`;
 
-  width: 180px;
-  min-height: 50px;
-  margin-left: -90px;
-  border-radius: 16px;
+const Title = styled.h3`
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+`;
 
-  background-color: #ffe4c4;
+const Address = styled.p`
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
+
+const Divider = styled.hr`
+  width: 100%;
+  height: 1px;
+  background: #ddd;
+  border: none;
+  margin: 4px 0;
 `;

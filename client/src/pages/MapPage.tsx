@@ -26,7 +26,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   const [toggle, setToggle] = useState(false);
   const navigate = useNavigate();
   const map = useMap();
-  const { setSelectedMarker } = useMapMarker();
+  const { selectedMarker, setSelectedMarker } = useMapMarker();
   const { selectedMomentMarker, setSelectedMomentMarker } = useMomentMarker();
   const markerRef = useRef<kakao.maps.Marker | null>(null);
   const overlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
@@ -119,8 +119,15 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
       markerRef.current.setMap(null);
       overlayRef.current.setMap(null);
       setSelectedPlaceId("");
+    } else if (
+      !isNaN(Number(selectedMarker?.id)) &&
+      markerRef.current &&
+      overlayRef.current
+    ) {
+      markerRef.current.setMap(null);
+      overlayRef.current.setMap(null);
     }
-  }, [selectedMomentMarker]);
+  }, [selectedMomentMarker, selectedMarker?.id]);
 
   useEffect(() => {
     if (!map) return;
@@ -179,13 +186,20 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
             overlayRef.current = newOverlay;
 
             setSelectedMarker({
-              id: `clicked_marker`,
+              id:
+                result[0]?.road_address?.building_name ||
+                result[0]?.address?.address_name ||
+                `clicked_marker`,
               title: addressInfo,
               position: latlng,
               address: addressInfo,
             });
 
-            setSelectedPlaceId("clicked_marker");
+            setSelectedPlaceId(
+              result[0]?.road_address?.building_name ||
+                result[0]?.address?.address_name ||
+                `clicked_marker`
+            );
             setSelectedMomentMarker(null);
           }
         }
@@ -230,6 +244,9 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
         <MapMarkerController
           places={places}
           selectedPlaceId={selectedPlaceId}
+          onSelect={(placeId) => {
+            setSelectedPlaceId(placeId);
+          }}
         />
         {toggle && (
           <SearchLocation

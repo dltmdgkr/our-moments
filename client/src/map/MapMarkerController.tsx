@@ -6,9 +6,11 @@ import { PlaceType } from "./mapTypes";
 export default function MapMarkerController({
   places,
   selectedPlaceId,
+  onSelect,
 }: {
   places: PlaceType[];
   selectedPlaceId?: string;
+  onSelect: (placeId: string) => void;
 }) {
   const map = useMap();
 
@@ -33,6 +35,7 @@ export default function MapMarkerController({
             place={place}
             index={index}
             showInfo={selectedPlaceId === place.id}
+            onSelect={onSelect}
           />
         );
       })}
