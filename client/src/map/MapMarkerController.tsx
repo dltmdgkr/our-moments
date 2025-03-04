@@ -24,7 +24,7 @@ export default function MapMarkerController({
     });
 
     map.setBounds(bounds);
-  }, [places]);
+  }, [places, map]);
 
   return (
     <>

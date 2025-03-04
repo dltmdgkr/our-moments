@@ -61,7 +61,7 @@ export default function MapMarker({
     });
 
     return marker;
-  }, [map, place, setSelectedMarker, index, infoWindow]);
+  }, [map, place, setSelectedMarker, index, infoWindow, onSelect]);
 
   useEffect(() => {
     if (selectedMarker && selectedMarker.position !== place.position) {

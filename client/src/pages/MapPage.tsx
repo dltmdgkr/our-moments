@@ -20,7 +20,6 @@ import { extractLatLng } from "../utils/extractLatLng";
 export default function MapPage({ showModal }: { showModal: () => void }) {
   const location = useLocation();
   const { position } = location.state || {};
-
   const [places, setPlaces] = useState<PlaceType[]>([]);
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
   const [toggle, setToggle] = useState(false);
@@ -61,6 +60,8 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
       const moveLatLon = new kakao.maps.LatLng(position.lat, position.lng);
       map.setCenter(moveLatLon);
       map.setLevel(4, { animate: true });
+
+      window.history.replaceState({}, document.title);
     }
   }, [position, map]);
 

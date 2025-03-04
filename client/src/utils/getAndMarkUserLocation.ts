@@ -21,10 +21,12 @@ export const getAndMarkUserLocation = (map: kakao.maps.Map | null) => {
             imageSize,
             imageOption
           );
+
           const marker = new kakao.maps.Marker({
             position: userPosition,
             image: markerImage,
           });
+
           marker.setMap(map);
         }
         resolve(userPosition);

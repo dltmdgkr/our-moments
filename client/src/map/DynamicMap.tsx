@@ -2,11 +2,11 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { kakaoMapContext } from "../hooks/useMap";
 import styled from "styled-components";
 import { extractLatLng } from "../utils/extractLatLng";
+import { getAndMarkUserLocation } from "../utils/getAndMarkUserLocation";
 
 export default function DynamicMap({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
   const kakaoMapRef = useRef<HTMLDivElement | null>(null);
-
   const mapPosition = useRef(
     JSON.parse(sessionStorage.getItem("mapPosition") || "{}")
   );
@@ -39,6 +39,14 @@ export default function DynamicMap({ children }: { children: ReactNode }) {
 
     initializeMap();
   }, []);
+
+  useEffect(() => {
+    if (!map) return;
+
+    getAndMarkUserLocation(map).catch((error) =>
+      console.error("Failed to mark user location:", error)
+    );
+  }, [map]);
 
   return (
     <>
