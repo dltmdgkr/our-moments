@@ -50,17 +50,11 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   useEffect(() => {
     if (!map || !selectedMomentMarker?.position) return;
 
-    let targetPoint: kakao.maps.LatLng | null = null;
+    const { lat, lng } = extractLatLng(selectedMomentMarker.position);
+    const targetPoint = new kakao.maps.LatLng(lat, lng);
 
-    if (selectedMomentMarker.position) {
-      const { lat, lng } = extractLatLng(selectedMomentMarker.position);
-      targetPoint = new kakao.maps.LatLng(lat, lng);
-    }
-
-    if (targetPoint) {
-      map.setCenter(targetPoint);
-    }
-  }, []);
+    map.setCenter(targetPoint);
+  }, [map, selectedMomentMarker]);
 
   useEffect(() => {
     if (position && map) {
@@ -117,7 +111,9 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
   useEffect(() => {
     if (selectedMomentMarker && markerRef.current && overlayRef.current) {
       markerRef.current.setMap(null);
+      markerRef.current = null;
       overlayRef.current.setMap(null);
+      overlayRef.current = null;
       setSelectedPlaceId("");
     } else if (
       !isNaN(Number(selectedMarker?.id)) &&
@@ -125,7 +121,9 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
       overlayRef.current
     ) {
       markerRef.current.setMap(null);
+      markerRef.current = null;
       overlayRef.current.setMap(null);
+      overlayRef.current = null;
     }
   }, [selectedMomentMarker, selectedMarker?.id]);
 
@@ -223,7 +221,18 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
 
   const handleCurrentLocationClick = () => {
     moveToCurrentLocation(map);
+    setSelectedMarker(null);
     setSelectedMomentMarker(null);
+    setSelectedPlaceId("");
+
+    if (markerRef.current) {
+      markerRef.current.setMap(null);
+      markerRef.current = null;
+    }
+    if (overlayRef.current) {
+      overlayRef.current.setMap(null);
+      overlayRef.current = null;
+    }
   };
 
   return (
@@ -283,7 +292,9 @@ const FloatingButton = styled.div<{ bottom: string }>`
   justify-content: center;
 `;
 
-const OverlayWrapper = styled.div<{ toggle: boolean }>`
+const OverlayWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "toggle",
+})<{ toggle: boolean }>`
   position: absolute;
   top: 0;
   left: 0;

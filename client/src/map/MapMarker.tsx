@@ -53,10 +53,8 @@ export default function MapMarker({
     });
 
     kakao.maps.event.addListener(marker, "click", function () {
+      map.setLevel(4, { animate: true });
       map.setCenter(place.position);
-      map.setLevel(4, {
-        animate: true,
-      });
       infoWindow.setMap(map);
       setSelectedMarker(place);
       onSelect(place.id);
