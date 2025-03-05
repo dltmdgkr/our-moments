@@ -3,9 +3,9 @@ import { useMap } from "./useMap";
 import { useEffect, useState } from "react";
 import { PlaceType } from "../map/mapTypes";
 import { useMapMarker } from "../context/MapMarkerProvider";
-import useMoments from "./useMoments";
+import useFetchMoments from "./useFetchMoments";
 import { useMomentMarker } from "../context/MomentMarkerProvider";
-import useMapMomentMarkers from "./useMapMomentMarkers";
+import useMomentMarkersWithClick from "./useMomentMarkersWithClick";
 import useMapClickToAddMarker from "./useMapClickToAddMarker";
 import { extractLatLng } from "../utils/extractLatLng";
 import { moveToCurrentLocation } from "../utils/moveToCurrentLocation";
@@ -19,14 +19,10 @@ export default function useMapPageLogic() {
   const [places, setPlaces] = useState<PlaceType[]>([]);
   const [toggle, setToggle] = useState(false);
   const { selectedMarker, setSelectedMarker } = useMapMarker();
-  const { moments } = useMoments();
+  const { moments } = useFetchMoments();
   const { selectedMomentMarker, setSelectedMomentMarker } = useMomentMarker();
 
-  useMapMomentMarkers({
-    map,
-    moments,
-    setSelectedMomentMarker,
-  });
+  useMomentMarkersWithClick({ map, moments, setSelectedMomentMarker });
   const { markerRef, overlayRef, selectedPlaceId, setSelectedPlaceId } =
     useMapClickToAddMarker({ map, setSelectedMarker, setSelectedMomentMarker });
 

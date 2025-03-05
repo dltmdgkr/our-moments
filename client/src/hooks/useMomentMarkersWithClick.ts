@@ -2,17 +2,17 @@ import { useEffect, useRef } from "react";
 import { extractLatLng } from "../utils/extractLatLng";
 import { Post } from "../context/PostProvider";
 
-interface useMapMomentMarkersProps {
+interface useMomentMarkersWithClickProps {
   map: kakao.maps.Map;
   moments: Post[];
   setSelectedMomentMarker: (post: Post | null) => void;
 }
 
-export default function useMapMomentMarkers({
+export default function useMomentMarkersWithClick({
   map,
   moments,
   setSelectedMomentMarker,
-}: useMapMomentMarkersProps) {
+}: useMomentMarkersWithClickProps) {
   const markersRef = useRef<kakao.maps.Marker[]>([]);
 
   useEffect(() => {

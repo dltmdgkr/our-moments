@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Post } from "../context/PostProvider";
 import { axiosInstance } from "../utils/axiosInstance";
 
-export default function useMoments() {
+export default function useFetchMoments() {
   const [moments, setMoments] = useState<Post[]>([]);
 
   useEffect(() => {
