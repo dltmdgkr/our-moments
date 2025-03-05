@@ -94,8 +94,12 @@ export default function UploadForm({
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (!files || title.trim() === "" || description.trim() === "") {
+    if (title.trim() === "" || description.trim() === "") {
       toast.error("제목과 내용을 입력해주세요.");
+      return;
+    }
+    if (!files) {
+      toast.error("사진을 업로드 해주세요.");
       return;
     }
     try {
