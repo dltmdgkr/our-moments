@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "./useMap";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PlaceType } from "../map/mapTypes";
 import { useMapMarker } from "../context/MapMarkerProvider";
 import useFetchMoments from "./useFetchMoments";
@@ -9,12 +9,15 @@ import useMomentMarkersWithClick from "./useMomentMarkersWithClick";
 import useMapClickToAddMarker from "./useMapClickToAddMarker";
 import { extractLatLng } from "../utils/extractLatLng";
 import { moveToCurrentLocation } from "../utils/moveToCurrentLocation";
+import { AuthContext } from "../context/AuthProvider";
+import { toast } from "react-toastify";
 
 export default function useMapPageLogic() {
   const location = useLocation();
   const navigate = useNavigate();
   const map = useMap();
   const { position } = location.state || {};
+  const { me } = useContext(AuthContext);
 
   const [places, setPlaces] = useState<PlaceType[]>([]);
   const [toggle, setToggle] = useState(false);
@@ -65,6 +68,10 @@ export default function useMapPageLogic() {
   }, [selectedMomentMarker, selectedMarker?.id]);
 
   const handleUploadClick = () => {
+    if (!me) {
+      toast.warn("로그인이 필요합니다.");
+      return;
+    }
     if (!selectedPlaceId) {
       alert("위치를 먼저 선택해주세요!");
       return;

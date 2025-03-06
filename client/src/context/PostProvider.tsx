@@ -142,4 +142,10 @@ export default function PostProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export const usePosts = () => useContext(PostContext);
+export const usePosts = () => {
+  const context = useContext(PostContext);
+  if (!context) {
+    throw new Error("usePosts must be used within a PostProvider");
+  }
+  return context;
+};

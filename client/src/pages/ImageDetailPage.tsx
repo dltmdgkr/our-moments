@@ -5,17 +5,18 @@ import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axiosInstance";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import styled from "styled-components";
-import { Post, PostContext } from "../context/PostProvider";
+import { Post, usePosts } from "../context/PostProvider";
 import BackButton from "../components/BackButton";
+import { useMomentMarker } from "../context/MomentMarkerProvider";
 
 export default function ImageDetailPage() {
   const navigate = useNavigate();
   const { postId } = useParams();
-  const { posts, myPrivatePosts, setPosts, setMyPrivatePosts } =
-    useContext(PostContext);
+  const { posts, myPrivatePosts, setPosts, setMyPrivatePosts } = usePosts();
   const { me } = useContext(AuthContext);
   const [hasLiked, setHasLiked] = useState(false);
   const [post, setPost] = useState<Post>();
+  const { setSelectedMomentMarker } = useMomentMarker();
 
   useEffect(() => {
     const post =
@@ -116,6 +117,7 @@ export default function ImageDetailPage() {
     }
 
     navigate("/", { state: { position: post.position } });
+    setSelectedMomentMarker(null);
   };
 
   return (
