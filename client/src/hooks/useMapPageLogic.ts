@@ -65,7 +65,13 @@ export default function useMapPageLogic() {
       overlayRef.current.setMap(null);
       overlayRef.current = null;
     }
-  }, [selectedMomentMarker, selectedMarker?.id]);
+  }, [
+    selectedMomentMarker,
+    selectedMarker?.id,
+    markerRef,
+    overlayRef,
+    setSelectedPlaceId,
+  ]);
 
   const handleUploadClick = () => {
     if (!me) {

@@ -32,7 +32,7 @@ export default function KakaoMapScriptLoader({
       };
       document.getElementById("root")?.appendChild(script);
     }
-  }, []);
+  }, [KAKAO_MAP_APP_KEY]);
 
   return (
     <>{mapScriptLoaded ? children : <div>지도를 가져오는 중입니다...</div>}</>
