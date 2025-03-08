@@ -38,6 +38,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Create .env file in client
+        run: |
+          echo "REACT_APP_KAKAO_MAP_KEY=${{ secrets.REACT_APP_KAKAO_MAP_KEY }}" >> ./client/.env.production
+          cat ./client/.env.production
+
       - name: Install dependencies & Build frontend
         run: |
           cd client
