@@ -8,7 +8,10 @@ export default function DynamicMap({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
   const kakaoMapRef = useRef<HTMLDivElement | null>(null);
   const mapPosition = useRef(
-    JSON.parse(sessionStorage.getItem("mapPosition") || "{}")
+    JSON.parse(
+      sessionStorage.getItem("mapPosition") ||
+        '{"lat": 37.5665, "lng": 126.9780, "level": 3}'
+    )
   );
 
   useEffect(() => {
