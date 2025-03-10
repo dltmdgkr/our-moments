@@ -41,6 +41,7 @@ jobs:
       - name: Create .env file in client
         run: |
           echo "REACT_APP_KAKAO_MAP_KEY=${{ secrets.REACT_APP_KAKAO_MAP_KEY }}" > ./client/.env.production
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> ./client/.env.production
           cat ./client/.env.production
 
       - name: Install dependencies & Build frontend
