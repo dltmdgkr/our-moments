@@ -71,6 +71,13 @@ export default function PostProvider({ children }: { children: ReactNode }) {
     axiosInstance
       .get<Post[]>(postUrl)
       .then((result) => {
+        console.log("응답 데이터:", result.data);
+        if (!Array.isArray(result.data)) {
+          throw new Error(
+            "서버 응답이 배열이 아님: " + JSON.stringify(result.data)
+          );
+        }
+
         if (isPublic) {
           setPosts((prevData) => {
             const newData = result.data.filter(
