@@ -33,11 +33,13 @@ export default function ImageList() {
   ));
 
   return (
-    <>
-      <Title>Image List {isPublic ? "공개" : "개인"} 사진</Title>
-      <ToggleButton onClick={handleTogglePublic}>
-        {(isPublic ? "개인" : "공개") + "사진 보기"}
-      </ToggleButton>
+    <Wrapper>
+      <div>
+        <Title>Image List {isPublic ? "공개" : "개인"} 사진</Title>
+        <ToggleButton onClick={handleTogglePublic}>
+          {(isPublic ? "개인" : "공개") + "사진 보기"}
+        </ToggleButton>
+      </div>
       <ImageListContainer>
         {postList.length > 0
           ? postList
@@ -48,9 +50,16 @@ export default function ImageList() {
       ) : (
         <LoadMoreButton onClick={loadMorePosts}>Load More Posts</LoadMoreButton>
       )}
-    </>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  width: 50%;
+  min-height: 100vh;
+  height: 100%;
+  margin: 0 auto;
+`;
 
 const Title = styled.h3`
   display: inline-block;
@@ -86,6 +95,18 @@ const StyledImage = styled.img`
     box-shadow: 4px 4px 4px grey;
     opacity: 0.7;
     cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    min-width: 300px;
+    width: 100%;
+    height: 200px;
+  }
+
+  @media (max-width: 480px) {
+    min-width: 200px;
+    width: 100%;
+    height: 200px;
   }
 `;
 
