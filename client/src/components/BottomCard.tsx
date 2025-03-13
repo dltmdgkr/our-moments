@@ -61,6 +61,7 @@ const MomentImage = styled.img`
   height: 100px;
   object-fit: cover;
   margin-right: 10px;
+  border-radius: 10px;
 `;
 
 const InfoContainer = styled.div`

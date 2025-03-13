@@ -87,14 +87,20 @@ const ImageListContainer = styled.div`
 `;
 
 const StyledImage = styled.img`
-  width: 140px;
-  height: 140px;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   transition: opacity 0.2s, box-shadow 0.2s;
   &:hover {
     box-shadow: 4px 4px 4px grey;
     opacity: 0.7;
     cursor: pointer;
+  }
+
+  @media (max-width: 835px) {
+    min-width: 400px;
+    width: 100%;
+    height: 200px;
   }
 
   @media (max-width: 768px) {
