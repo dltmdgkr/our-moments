@@ -1,182 +1,35 @@
-import {
-  ChangeEventHandler,
-  FormEventHandler,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
 import styled from "styled-components";
 import ProgressBar from "./ProgressBar";
-import { toast } from "react-toastify";
-import { axiosInstance } from "../utils/axiosInstance";
-import axios from "axios";
-import { PlaceType } from "../map/mapTypes";
-import { PostContext } from "../context/PostProvider";
-import { useNavigate } from "react-router-dom";
+import { Preview } from "./UploadContainer";
+import { ChangeEventHandler, FormEventHandler } from "react";
 
-interface Preview {
-  imgSrc: string | ArrayBuffer | null;
-  fileName: string;
-}
-
-interface MarkerContextType {
-  selectedMarker: PlaceType | null;
-  setSelectedMarker: (place: PlaceType | null) => void;
+interface UploadFormProps {
+  title: string;
+  description: string;
+  previews: Preview[];
+  percent: number[];
+  isPublic: boolean;
+  inputRef: React.RefObject<HTMLInputElement>;
+  onSubmit: FormEventHandler<HTMLFormElement>;
+  setTitle: (value: string) => void;
+  setDescription: (value: string) => void;
+  setIsPublic: (value: boolean | ((prev: boolean) => boolean)) => void;
+  imageSelectHandler: ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function UploadForm({
-  selectedMarker,
-  setSelectedMarker,
-}: MarkerContextType) {
-  const { setPosts, setMyPrivatePosts } = useContext(PostContext);
-  const [files, setFiles] = useState<File[] | null>(null);
-  const [previews, setPreviews] = useState<Preview[]>([]);
-  const [percent, setPercent] = useState<number[]>([]);
-  const [isPublic, setIsPublic] = useState(true);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
-    null
-  );
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (selectedMarker) {
-      setPosition({
-        lat: selectedMarker.position.getLat(),
-        lng: selectedMarker.position.getLng(),
-      });
-    } else {
-      setPosition(null);
-    }
-  }, [selectedMarker]);
-
-  const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
-    e
-  ) => {
-    const imageFiles = e.target.files;
-
-    if (imageFiles && imageFiles.length > 0) {
-      const imageArray = Array.from(imageFiles);
-
-      setFiles((prevFiles) => {
-        const newFiles = prevFiles ? [...prevFiles, ...imageArray] : imageArray;
-        return newFiles.slice(0, 5);
-      });
-
-      const imagePreviews = await Promise.all(
-        [...imageArray].map(async (imageFile) => {
-          return new Promise<Preview>((resolve, reject) => {
-            try {
-              const fileReader = new FileReader();
-
-              fileReader.readAsDataURL(imageFile);
-              fileReader.onload = (e) =>
-                resolve({
-                  imgSrc: e.target?.result as string,
-                  fileName: imageFile.name,
-                });
-            } catch (err) {
-              reject(err);
-            }
-          });
-        })
-      );
-
-      setPreviews((prevPreviews) => {
-        const newPreviews = [...prevPreviews, ...imagePreviews];
-        return newPreviews.slice(0, 5);
-      });
-    }
-  };
-
-  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    if (title.trim() === "" || description.trim() === "") {
-      toast.error("제목과 내용을 입력해주세요.");
-      return;
-    }
-    if (!files) {
-      toast.error("사진을 업로드 해주세요.");
-      return;
-    }
-    try {
-      const presignedData = await axiosInstance.post("/images/presigned", {
-        contentTypes: [...files].map((file) => file.type),
-      });
-
-      await Promise.all(
-        [...files].map((file, index) => {
-          const { presigned } = presignedData.data[index];
-
-          const formData = new FormData();
-
-          for (const key in presigned.fields) {
-            formData.append(key, presigned.fields[key]);
-          }
-
-          formData.append("Content-Type", file.type);
-          formData.append("file", file);
-
-          return axios.post(presigned.url, formData, {
-            onUploadProgress: (e) => {
-              setPercent((prevData) => {
-                const newData = [...prevData];
-                newData[index] = Math.round((100 * e.loaded) / e.total!);
-                return newData;
-              });
-            },
-          });
-        })
-      );
-
-      const res = await axiosInstance.post("/images", {
-        images: [...files].map((file, index) => ({
-          imageKey: presignedData.data[index].imageKey,
-          originalname: file.name,
-        })),
-        public: isPublic,
-        title,
-        description,
-        location: selectedMarker?.address,
-        position,
-      });
-
-      if (isPublic) {
-        setPosts((prevData) => [res.data, ...prevData]);
-      } else {
-        setMyPrivatePosts((prevData) => [res.data, ...prevData]);
-      }
-
-      toast.success("이미지가 성공적으로 업로드되었습니다!", {
-        autoClose: 3000,
-      });
-
-      setTimeout(() => {
-        setSelectedMarker(null);
-        setTitle("");
-        setDescription("");
-        setPercent([]);
-        setPreviews([]);
-        setIsPublic(true);
-        if (inputRef.current) inputRef.current.value = "";
-        navigate("/", { state: { position } });
-      }, 3000);
-    } catch (err) {
-      console.error(err);
-      toast.error("이미지 업로드에 실패했습니다.");
-      setSelectedMarker(null);
-      setTitle("");
-      setDescription("");
-      setPercent([]);
-      setPreviews([]);
-      setIsPublic(true);
-      if (inputRef.current) inputRef.current.value = "";
-    }
-  };
-
+  title,
+  description,
+  previews,
+  percent,
+  isPublic,
+  inputRef,
+  onSubmit,
+  setTitle,
+  setDescription,
+  setIsPublic,
+  imageSelectHandler,
+}: UploadFormProps) {
   return (
     <FormContainer onSubmit={onSubmit}>
       <Input

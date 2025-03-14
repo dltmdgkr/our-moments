@@ -1,12 +1,12 @@
 import BackButton from "../components/BackButton";
-import UploadForm from "../components/UploadForm";
+import UploadContainer from "../components/UploadContainer";
 import { useMapMarker } from "../context/MapMarkerProvider";
 
 export default function UploadPage() {
   const { selectedMarker, setSelectedMarker } = useMapMarker();
 
   return (
-    <div>
+    <>
       <BackButton />
       <h1>업로드 페이지</h1>
       {selectedMarker && (
@@ -17,10 +17,10 @@ export default function UploadPage() {
           </p>
         </div>
       )}
-      <UploadForm
+      <UploadContainer
         selectedMarker={selectedMarker}
         setSelectedMarker={setSelectedMarker}
       />
-    </div>
+    </>
   );
 }
