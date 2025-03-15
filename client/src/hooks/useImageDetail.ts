@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { Post, usePosts } from "../context/PostProvider";
+import { usePosts } from "../context/PostProvider";
 import { axiosInstance } from "../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthProvider";
+import { Post } from "../types/Post";
 
 export default function useImageDetail(postId: string | undefined) {
   const { posts, myPrivatePosts, setPosts, setMyPrivatePosts } = usePosts();

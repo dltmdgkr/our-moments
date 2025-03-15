@@ -1,19 +1,19 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useMap } from "../hooks/useMap";
-import { PlaceType } from "./mapTypes";
-import { useMapMarker } from "../context/MapMarkerProvider";
-import { useMomentMarker } from "../context/MomentMarkerProvider";
+import { useMap } from "../../hooks/useMap";
+import { Place } from "../../types/Place";
+import { useMapMarker } from "../../context/MapMarkerProvider";
+import { useMomentMarker } from "../../context/MomentMarkerProvider";
 
 interface SearchLocationProps {
-  onUpdatePlaces: (places: PlaceType[]) => void;
+  onUpdatePlaces: (places: Place[]) => void;
   onSelect: (placeId: string) => void;
 }
 
 export default function SearchLocation(props: SearchLocationProps) {
   const map = useMap();
   const [keyword, setKeyword] = useState("");
-  const [places, setPlaces] = useState<PlaceType[]>([]);
+  const [places, setPlaces] = useState<Place[]>([]);
   const placeService = useRef<kakao.maps.services.Places | null>(null);
   const { setSelectedMarker } = useMapMarker();
   const { setSelectedMomentMarker } = useMomentMarker();
@@ -62,7 +62,7 @@ export default function SearchLocation(props: SearchLocationProps) {
     setSelectedMomentMarker(null);
   };
 
-  const handleItemClick = (place: PlaceType) => {
+  const handleItemClick = (place: Place) => {
     map.setCenter(place.position);
     map.setLevel(4);
     props.onSelect(place.id);

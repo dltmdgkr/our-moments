@@ -5,12 +5,12 @@ import GalleryPage from "./pages/GalleryPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ImageDetailPage from "./pages/ImageDetailPage";
-import KakaoMapScriptLoader from "./map/KakaoMapScriptLoader";
+import KakaoMapScriptLoader from "./components/map/KakaoMapScriptLoader";
 import MapPage from "./pages/MapPage";
 import UploadPage from "./pages/UploadPage";
-import DynamicMap from "./map/DynamicMap";
+import DynamicMap from "./components/map/DynamicMap";
 import { useState } from "react";
-import { MenuModal } from "./components/MenuModal";
+import { MenuModal } from "./components/modal/MenuModal";
 import MapMarkerProvider from "./context/MapMarkerProvider";
 import MomentMarkerProvider from "./context/MomentMarkerProvider";
 

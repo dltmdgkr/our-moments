@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Post } from "../context/PostProvider";
+import { Post } from "../types/Post";
 import { axiosInstance } from "../utils/axiosInstance";
 
 export default function useFetchMoments() {

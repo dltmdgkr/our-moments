@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { Post } from "./PostProvider";
-
+import { Post } from "../types/Post";
 export interface MomentMarkerContextType {
   selectedMomentMarker: Post | null;
   setSelectedMomentMarker: (post: Post | null) => void;

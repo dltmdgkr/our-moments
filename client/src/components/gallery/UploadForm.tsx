@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "../common/ProgressBar";
 import { Preview } from "./UploadContainer";
 import { ChangeEventHandler, FormEventHandler } from "react";
 

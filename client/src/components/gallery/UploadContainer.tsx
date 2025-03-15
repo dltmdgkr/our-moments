@@ -1,8 +1,8 @@
 import UploadForm from "./UploadForm";
-import { PlaceType } from "../map/mapTypes";
-import useLocation from "../hooks/useLocation";
-import usePresignedUpload from "../hooks/usePresignedUpload";
-import useImagePreview from "../hooks/useImagePreview";
+import { Place } from "../../types/Place";
+import useLocation from "../../hooks/useLocation";
+import usePresignedUpload from "../../hooks/usePresignedUpload";
+import useImagePreview from "../../hooks/useImagePreview";
 
 export interface Preview {
   imgSrc: string | ArrayBuffer | null;
@@ -10,8 +10,8 @@ export interface Preview {
 }
 
 interface MarkerContextType {
-  selectedMarker: PlaceType | null;
-  setSelectedMarker: (place: PlaceType | null) => void;
+  selectedMarker: Place | null;
+  setSelectedMarker: (place: Place | null) => void;
 }
 
 export default function UploadContainer({

@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "./useMap";
 import { useContext, useEffect, useState } from "react";
-import { PlaceType } from "../map/mapTypes";
+import { Place } from "../types/Place";
 import { useMapMarker } from "../context/MapMarkerProvider";
 import useFetchMoments from "./useFetchMoments";
 import { useMomentMarker } from "../context/MomentMarkerProvider";
@@ -19,7 +19,7 @@ export default function useMapPageLogic() {
   const { position } = location.state || {};
   const { me } = useContext(AuthContext);
 
-  const [places, setPlaces] = useState<PlaceType[]>([]);
+  const [places, setPlaces] = useState<Place[]>([]);
   const [toggle, setToggle] = useState(false);
   const { selectedMarker, setSelectedMarker } = useMapMarker();
   const { moments } = useFetchMoments();

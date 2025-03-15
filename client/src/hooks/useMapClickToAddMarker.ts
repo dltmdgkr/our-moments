@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Post } from "../context/PostProvider";
-import { PlaceType } from "../map/mapTypes";
+import { Place } from "../types/Place";
+import { Post } from "../types/Post";
 
 interface useMapClickToAddMarkerProps {
   map: kakao.maps.Map;
-  setSelectedMarker: (place: PlaceType | null) => void;
+  setSelectedMarker: (place: Place | null) => void;
   setSelectedMomentMarker: (post: Post | null) => void;
 }
 

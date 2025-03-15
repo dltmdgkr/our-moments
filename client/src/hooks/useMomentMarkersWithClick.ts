@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { extractLatLng } from "../utils/extractLatLng";
-import { Post } from "../context/PostProvider";
+import { Post } from "../types/Post";
 
 interface useMomentMarkersWithClickProps {
   map: kakao.maps.Map;

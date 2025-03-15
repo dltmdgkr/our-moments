@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { PostContext } from "../context/PostProvider";
-import { AuthContext } from "../context/AuthProvider";
+import { PostContext } from "../../context/PostProvider";
+import { AuthContext } from "../../context/AuthProvider";
 
 export default function ImageList() {
   const { me } = useContext(AuthContext);

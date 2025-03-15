@@ -1,4 +1,4 @@
-import { Image } from "../context/PostProvider";
+import { Image } from "../../types/Image";
 
 export default function ImageDetailGallery({ images }: { images: Image[] }) {
   return (

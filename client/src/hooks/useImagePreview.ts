@@ -1,5 +1,5 @@
 import { ChangeEventHandler, useState } from "react";
-import { Preview } from "../components/UploadContainer";
+import { Preview } from "../components/gallery/UploadContainer";
 
 export default function useImagePreview() {
   const [files, setFiles] = useState<File[] | null>(null);

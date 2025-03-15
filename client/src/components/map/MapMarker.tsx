@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { PlaceType } from "./mapTypes";
-import { useMap } from "../hooks/useMap";
+import { Place } from "../../types/Place";
+import { useMap } from "../../hooks/useMap";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import { useMapMarker } from "../context/MapMarkerProvider";
+import { useMapMarker } from "../../context/MapMarkerProvider";
 
 const MARKER_IMAGE_URL =
   "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png";
@@ -14,7 +14,7 @@ export default function MapMarker({
   showInfo,
   onSelect,
 }: {
-  place: PlaceType;
+  place: Place;
   index: number;
   showInfo?: boolean;
   onSelect: (placeId: string) => void;

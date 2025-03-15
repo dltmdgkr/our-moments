@@ -1,5 +1,5 @@
-import HamburgerButton from "../components/HamburgerButton";
-import SignupContainer from "../components/SignupContainer";
+import HamburgerButton from "../components/common/HamburgerButton";
+import SignupContainer from "../components/auth/SignupContainer";
 
 export default function SignupPage({ showModal }: { showModal: () => void }) {
   return (

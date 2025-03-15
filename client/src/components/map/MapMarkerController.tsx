@@ -1,14 +1,14 @@
 import { useEffect } from "react";
-import { useMap } from "../hooks/useMap";
+import { useMap } from "../../hooks/useMap";
 import MapMarker from "./MapMarker";
-import { PlaceType } from "./mapTypes";
+import { Place } from "../../types/Place";
 
 export default function MapMarkerController({
   places,
   selectedPlaceId,
   onSelect,
 }: {
-  places: PlaceType[];
+  places: Place[];
   selectedPlaceId?: string;
   onSelect: (placeId: string) => void;
 }) {

@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { PlaceType } from "../map/mapTypes";
+import { Place } from "../types/Place";
 
 interface MarkerContextType {
-  selectedMarker: PlaceType | null;
-  setSelectedMarker: (place: PlaceType | null) => void;
+  selectedMarker: Place | null;
+  setSelectedMarker: (place: Place | null) => void;
 }
 
 const MapMarkerContext = createContext<MarkerContextType | undefined>(
@@ -15,7 +15,7 @@ export default function MapMarkerProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [selectedMarker, setSelectedMarker] = useState<PlaceType | null>(null);
+  const [selectedMarker, setSelectedMarker] = useState<Place | null>(null);
 
   return (
     <MapMarkerContext.Provider value={{ selectedMarker, setSelectedMarker }}>

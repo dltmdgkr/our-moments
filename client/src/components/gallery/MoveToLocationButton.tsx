@@ -1,6 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Post } from "../context/PostProvider";
+import { Post } from "../../types/Post";
 
 interface MoveToLocationButtonProps {
   position: kakao.maps.LatLng;

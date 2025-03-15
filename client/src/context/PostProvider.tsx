@@ -9,29 +9,7 @@ import React, {
 } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
 import { AuthContext } from "./AuthProvider";
-
-export interface Post {
-  _id: string;
-  likes: string[];
-  user: {
-    _id: string;
-    name: string;
-    username: string;
-  };
-  images: Image[];
-  title: string;
-  description: string;
-  location: string;
-  position: kakao.maps.LatLng;
-  public: boolean;
-  createdAt: Date;
-}
-
-export interface Image {
-  _id: string;
-  key: string;
-  createdAt: Date;
-}
+import { Post } from "../types/Post";
 
 interface PostContextType {
   posts: Post[];

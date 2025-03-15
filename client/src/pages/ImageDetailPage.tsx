@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
-import BackButton from "../components/BackButton";
+import BackButton from "../components/common/BackButton";
 import { useMomentMarker } from "../context/MomentMarkerProvider";
-import ImageDetailGallery from "../components/ImageDetailGallery";
+import ImageDetailGallery from "../components/gallery/ImageDetailGallery";
 import useImageDetail from "../hooks/useImageDetail";
-import LocationInfo from "../components/LocationInfo";
-import PostActionButtons from "../components/PostActionButtons";
+import LocationInfo from "../components/gallery/LocationInfo";
+import PostActionButtons from "../components/gallery/PostActionButtons";
 import { deleteHandler, likeHandler } from "../utils/postActions";
-import MoveToLocationButton from "../components/MoveToLocationButton";
+import MoveToLocationButton from "../components/gallery/MoveToLocationButton";
 
 export default function ImageDetailPage() {
   const { postId } = useParams();

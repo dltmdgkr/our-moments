@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { kakaoMapContext } from "../hooks/useMap";
+import { kakaoMapContext } from "../../hooks/useMap";
 import styled from "styled-components";
-import { extractLatLng } from "../utils/extractLatLng";
-import { getAndMarkUserLocation } from "../utils/getAndMarkUserLocation";
+import { extractLatLng } from "../../utils/extractLatLng";
+import { getAndMarkUserLocation } from "../../utils/getAndMarkUserLocation";
 
 export default function DynamicMap({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<kakao.maps.Map | null>(null);

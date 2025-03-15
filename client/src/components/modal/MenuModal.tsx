@@ -2,8 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthProvider";
-import { axiosInstance } from "../utils/axiosInstance";
+import { AuthContext } from "../../context/AuthProvider";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 interface MenuModalProps {
   openModal: boolean;

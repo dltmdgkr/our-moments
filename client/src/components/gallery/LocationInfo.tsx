@@ -1,6 +1,6 @@
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import styled from "styled-components";
-import { Post } from "../context/PostProvider";
+import { Post } from "../../types/Post";
 
 type LocationInfoProps = Pick<Post, "location">;
 

@@ -1,5 +1,5 @@
-import BackButton from "../components/BackButton";
-import UploadContainer from "../components/UploadContainer";
+import BackButton from "../components/common/BackButton";
+import UploadContainer from "../components/gallery/UploadContainer";
 import { useMapMarker } from "../context/MapMarkerProvider";
 
 export default function UploadPage() {

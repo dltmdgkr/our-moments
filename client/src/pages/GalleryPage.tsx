@@ -1,5 +1,5 @@
-import HamburgerButton from "../components/HamburgerButton";
-import ImageList from "../components/ImageList";
+import HamburgerButton from "../components/common/HamburgerButton";
+import ImageList from "../components/gallery/ImageList";
 
 export default function GalleryPage({ showModal }: { showModal: () => void }) {
   return (

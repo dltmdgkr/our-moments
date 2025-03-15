@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { PlaceType } from "../map/mapTypes";
+import { Place } from "../types/Place";
 
-export default function useLocation(selectedMarker: PlaceType | null) {
+export default function useLocation(selectedMarker: Place | null) {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
     null
   );

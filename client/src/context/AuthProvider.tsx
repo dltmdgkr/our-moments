@@ -7,12 +7,7 @@ import {
   useEffect,
 } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
-
-interface User {
-  sessionId: string;
-  userId: string;
-  name: string;
-}
+import { User } from "../types/User";
 
 interface AuthContextType {
   me: User | null;

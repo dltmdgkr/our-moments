@@ -4,14 +4,14 @@ import { axiosInstance } from "../utils/axiosInstance";
 import { PostContext } from "../context/PostProvider";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { PlaceType } from "../map/mapTypes";
-import { Preview } from "../components/UploadContainer";
+import { Place } from "../types/Place";
+import { Preview } from "../components/gallery/UploadContainer";
 
 interface usePresignedUploadProps {
   files: File[] | null;
   position: { lat: number; lng: number } | null;
-  selectedMarker: PlaceType | null;
-  setSelectedMarker: (place: PlaceType | null) => void;
+  selectedMarker: Place | null;
+  setSelectedMarker: (place: Place | null) => void;
   setPreviews: (previews: Preview[]) => void;
 }
 

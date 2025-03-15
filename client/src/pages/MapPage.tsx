@@ -1,9 +1,9 @@
-import SearchLocation from "../map/SearchLocation";
-import MapMarkerController from "../map/MapMarkerController";
-import HamburgerButton from "../components/HamburgerButton";
-import BottomCard from "../components/BottomCard";
+import SearchLocation from "../components/map/SearchLocation";
+import MapMarkerController from "../components/map/MapMarkerController";
+import HamburgerButton from "../components/common/HamburgerButton";
+import BottomCard from "../components/common/BottomCard";
 import styled from "styled-components";
-import MapControls from "../map/MapControls";
+import MapControls from "../components/map/MapControls";
 import useMapPageLogic from "../hooks/useMapPageLogic";
 
 export default function MapPage({ showModal }: { showModal: () => void }) {

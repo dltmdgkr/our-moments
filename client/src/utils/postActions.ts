@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { axiosInstance } from "./axiosInstance";
-import { Post } from "../context/PostProvider";
+import { Post } from "../types/Post";
 import { NavigateFunction } from "react-router-dom";
 
 interface LikeHandlerProps {
