@@ -44,5 +44,20 @@ export default function useImagePreview() {
     }
   };
 
-  return { files, previews, setPreviews, imageSelectHandler };
+  const removePreview = (index: number) => {
+    setPreviews((prev) => {
+      const newPreviews = prev.filter((_, i) => i !== index);
+
+      setFiles((prevFiles) => {
+        if (prevFiles) {
+          return prevFiles.filter((_, i) => i !== index);
+        }
+        return prevFiles;
+      });
+
+      return newPreviews;
+    });
+  };
+
+  return { files, previews, setPreviews, imageSelectHandler, removePreview };
 }

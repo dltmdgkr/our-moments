@@ -2,6 +2,7 @@ import styled from "styled-components";
 import ProgressBar from "../common/ProgressBar";
 import { Preview } from "./UploadContainer";
 import { ChangeEventHandler, FormEventHandler } from "react";
+import { GrClose } from "react-icons/gr";
 
 interface UploadFormProps {
   title: string;
@@ -15,6 +16,7 @@ interface UploadFormProps {
   setDescription: (value: string) => void;
   setIsPublic: (value: boolean | ((prev: boolean) => boolean)) => void;
   imageSelectHandler: ChangeEventHandler<HTMLInputElement>;
+  removePreview: (index: number) => void;
 }
 
 export default function UploadForm({
@@ -29,6 +31,7 @@ export default function UploadForm({
   setDescription,
   setIsPublic,
   imageSelectHandler,
+  removePreview,
 }: UploadFormProps) {
   return (
     <FormContainer onSubmit={onSubmit}>
@@ -46,6 +49,15 @@ export default function UploadForm({
       <PreviewContainer>
         {previews.map((preview, index) => (
           <ImageWrapper key={index}>
+            <CloseButton
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                removePreview(index);
+              }}
+            >
+              <GrClose size={16} />
+            </CloseButton>
             <ImagePreview src={preview.imgSrc as string} alt="사진 미리보기" />
             <ProgressBar percent={percent[index]} />
           </ImageWrapper>
@@ -116,7 +128,29 @@ const PreviewContainer = styled.div`
 `;
 
 const ImageWrapper = styled.div`
+  position: relative;
   text-align: center;
+  display: inline-block;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
 `;
 
 const ImagePreview = styled.img`

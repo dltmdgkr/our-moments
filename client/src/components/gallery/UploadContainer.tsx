@@ -19,7 +19,7 @@ export default function UploadContainer({
   setSelectedMarker,
 }: MarkerContextType) {
   const position = useLocation(selectedMarker);
-  const { files, previews, setPreviews, imageSelectHandler } =
+  const { files, previews, setPreviews, imageSelectHandler, removePreview } =
     useImagePreview();
   const {
     title,
@@ -52,6 +52,7 @@ export default function UploadContainer({
       setDescription={setDescription}
       setIsPublic={setIsPublic}
       imageSelectHandler={imageSelectHandler}
+      removePreview={removePreview}
     />
   );
 }
