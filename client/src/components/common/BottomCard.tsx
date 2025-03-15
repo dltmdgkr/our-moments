@@ -1,19 +1,37 @@
 import { Link } from "react-router-dom";
 import { MomentMarkerContextType } from "../../context/MomentMarkerProvider";
-import { GrNext } from "react-icons/gr";
+import { GrNext, GrClose } from "react-icons/gr";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 
 export default function BottomCard({
   selectedMomentMarker,
   setSelectedMomentMarker,
 }: MomentMarkerContextType) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!selectedMomentMarker || selectedMomentMarker.images.length === 0)
+      return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex(
+        (prevIndex) => (prevIndex + 1) % selectedMomentMarker.images.length
+      );
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [selectedMomentMarker]);
+
   if (!selectedMomentMarker) return null;
 
   return (
     <CardContainer>
-      <CloseButton onClick={() => setSelectedMomentMarker(null)}>x</CloseButton>
+      <CloseButton onClick={() => setSelectedMomentMarker(null)}>
+        <GrClose size={18} />
+      </CloseButton>
       <MomentImage
-        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${selectedMomentMarker.images[0].key}`}
+        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${selectedMomentMarker.images[currentIndex].key}`}
         alt="moment"
       />
       <InfoContainer>
@@ -22,9 +40,9 @@ export default function BottomCard({
         <DescriptionText>{selectedMomentMarker.description}</DescriptionText>
       </InfoContainer>
       <LinkContainer>
-        <Link to={`/images/${selectedMomentMarker._id}`}>
-          <GrNext />
-        </Link>
+        <StyledLink to={`/images/${selectedMomentMarker._id}`}>
+          <GrNext size={20} />
+        </StyledLink>
       </LinkContainer>
     </CardContainer>
   );
@@ -52,8 +70,17 @@ const CloseButton = styled.button`
   right: 8px;
   background: none;
   border: none;
-  font-size: 16px;
   cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const MomentImage = styled.img`
@@ -66,27 +93,61 @@ const MomentImage = styled.img`
 
 const InfoContainer = styled.div`
   flex: 1;
+  overflow: hidden;
 `;
 
 const LocationText = styled.p`
   font-size: 14px;
   color: #888;
   margin-bottom: 2px;
+  white-space: nowrap;
 `;
 
 const TitleText = styled.h4`
   margin: 0;
   font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 `;
 
 const DescriptionText = styled.p`
   font-size: 14px;
   color: darkred;
   font-weight: bold;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
 
 const LinkContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const StyledLink = styled(Link)`
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background 0.2s;
+
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
 `;

@@ -7,6 +7,7 @@ import LocationInfo from "../components/gallery/LocationInfo";
 import PostActionButtons from "../components/gallery/PostActionButtons";
 import { deleteHandler, likeHandler } from "../utils/postActions";
 import MoveToLocationButton from "../components/gallery/MoveToLocationButton";
+import styled from "styled-components";
 
 export default function ImageDetailPage() {
   const { postId } = useParams();
@@ -24,7 +25,7 @@ export default function ImageDetailPage() {
       <ImageDetailGallery images={post.images} />
       <LocationInfo location={post.location} />
       <h2>{post.title}</h2>
-      <p>{post.description}</p>
+      <DescriptionArea>{post.description}</DescriptionArea>
       <div>좋아요 {post.likes.length}</div>
       <MoveToLocationButton
         position={post.position}
@@ -58,3 +59,8 @@ export default function ImageDetailPage() {
     </div>
   );
 }
+
+const DescriptionArea = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+`;
