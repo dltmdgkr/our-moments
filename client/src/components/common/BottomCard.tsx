@@ -14,16 +14,30 @@ export default function BottomCard({
     if (!selectedMomentMarker || selectedMomentMarker.images.length === 0)
       return;
 
-    const interval = setInterval(() => {
-      setCurrentIndex(
-        (prevIndex) => (prevIndex + 1) % selectedMomentMarker.images.length
-      );
-    }, 1500);
+    if (selectedMomentMarker.images.length === 1) {
+      setCurrentIndex(0);
+      return;
+    }
 
-    return () => clearInterval(interval);
+    if (selectedMomentMarker.images.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentIndex(
+          (prevIndex) => (prevIndex + 1) % selectedMomentMarker.images.length
+        );
+      }, 1500);
+
+      return () => {
+        clearInterval(interval);
+        setCurrentIndex(0);
+      };
+    }
   }, [selectedMomentMarker]);
 
-  if (!selectedMomentMarker) return null;
+  if (!selectedMomentMarker || selectedMomentMarker.images.length === 0)
+    return null;
+
+  const currentImage = selectedMomentMarker.images[currentIndex];
+  if (!currentImage) return null;
 
   return (
     <CardContainer>
@@ -31,7 +45,7 @@ export default function BottomCard({
         <GrClose size={18} />
       </CloseButton>
       <MomentImage
-        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${selectedMomentMarker.images[currentIndex].key}`}
+        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${currentImage.key}`}
         alt="moment"
       />
       <InfoContainer>
