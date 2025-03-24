@@ -1,0 +1,53 @@
+{
+  "name": "Our Moments",
+  "short_name": "Our Moments",
+  "description": "Our Moments",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/our_moments-192px.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/our_moments-512px.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "새 창",
+      "short_name": "새 창",
+      "description": "새 창",
+      "url": "/",
+      "icons": [{ "src": "/our_moments-192px.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "새 창",
+      "short_name": "새 창",
+      "description": "새 창",
+      "url": "/",
+      "icons": [{ "src": "/our_moments-512px.png", "sizes": "512x512" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/our_moments-512px.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/our_moments-512px.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "form_factor": "narrow"
+    }
+  ]
+}
