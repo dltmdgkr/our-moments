@@ -1,10 +1,10 @@
-import SearchForm from "../components/map/SearchForm";
+import { useState } from "react";
+import SearchForm from "../components/search/SearchForm";
 import HamburgerButton from "../components/common/HamburgerButton";
 import BottomCard from "../components/common/BottomCard";
 import styled from "styled-components";
 import MapControls from "../components/map/MapControls";
 import useMapPageLogic from "../hooks/useMapPageLogic";
-import { useState } from "react";
 
 export default function MapPage({ showModal }: { showModal: () => void }) {
   const [toggle, setToggle] = useState(false);
