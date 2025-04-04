@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "./useMap";
-import { useContext, useEffect, useState } from "react";
-import { Place } from "../types/Place";
+import { useContext, useEffect } from "react";
 import { useMapMarker } from "../context/MapMarkerProvider";
 import useFetchMoments from "./useFetchMoments";
 import { useMomentMarker } from "../context/MomentMarkerProvider";
@@ -11,30 +10,49 @@ import { extractLatLng } from "../utils/extractLatLng";
 import { moveToCurrentLocation } from "../utils/moveToCurrentLocation";
 import { AuthContext } from "../context/AuthProvider";
 import { toast } from "react-toastify";
+import useSearchedMarker from "./useSearchedMarker";
 
-export default function useMapPageLogic() {
+interface useMapPageLogicProps {
+  setToggle: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function useMapPageLogic({ setToggle }: useMapPageLogicProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const map = useMap();
   const { position } = location.state || {};
   const { me } = useContext(AuthContext);
-
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [toggle, setToggle] = useState(false);
   const { selectedMarker, setSelectedMarker } = useMapMarker();
   const { moments } = useFetchMoments();
   const { selectedMomentMarker, setSelectedMomentMarker } = useMomentMarker();
 
-  useMomentMarkersWithClick({ map, moments, setSelectedMomentMarker });
-  const { markerRef, overlayRef, selectedPlaceId, setSelectedPlaceId } =
-    useMapClickToAddMarker({ map, setSelectedMarker, setSelectedMomentMarker });
+  useMomentMarkersWithClick({
+    map,
+    moments,
+    setSelectedMomentMarker,
+    setToggle,
+  });
+
+  const {
+    markerRef,
+    overlayRef,
+    selectedPlaceId,
+    setSelectedPlaceId,
+    mapClicked,
+    clearMarker,
+  } = useMapClickToAddMarker({
+    map,
+    setSelectedMarker,
+    setSelectedMomentMarker,
+  });
+
+  const { searchedPlace, addSearchedMarker, clearSearchedMarker } =
+    useSearchedMarker({ map });
 
   useEffect(() => {
     if (!map || !selectedMomentMarker?.position) return;
-
     const { lat, lng } = extractLatLng(selectedMomentMarker.position);
     const targetPoint = new kakao.maps.LatLng(lat, lng);
-
     map.setCenter(targetPoint);
   }, [map, selectedMomentMarker]);
 
@@ -43,34 +61,29 @@ export default function useMapPageLogic() {
       const moveLatLon = new kakao.maps.LatLng(position.lat, position.lng);
       map.setCenter(moveLatLon);
       map.setLevel(4, { animate: true });
-
       window.history.replaceState({}, document.title);
     }
   }, [position, map]);
 
   useEffect(() => {
     if (selectedMomentMarker && markerRef.current && overlayRef.current) {
-      markerRef.current.setMap(null);
-      markerRef.current = null;
-      overlayRef.current.setMap(null);
-      overlayRef.current = null;
+      clearMarker();
       setSelectedPlaceId("");
     } else if (
       !isNaN(Number(selectedMarker?.id)) &&
       markerRef.current &&
       overlayRef.current
     ) {
-      markerRef.current.setMap(null);
-      markerRef.current = null;
-      overlayRef.current.setMap(null);
-      overlayRef.current = null;
+      clearMarker();
+    } else if (mapClicked) {
+      clearSearchedMarker();
     }
   }, [
+    mapClicked,
     selectedMomentMarker,
     selectedMarker?.id,
     markerRef,
     overlayRef,
-    setSelectedPlaceId,
   ]);
 
   const handleUploadClick = () => {
@@ -90,27 +103,19 @@ export default function useMapPageLogic() {
     setSelectedMarker(null);
     setSelectedMomentMarker(null);
     setSelectedPlaceId("");
-
-    if (markerRef.current) {
-      markerRef.current.setMap(null);
-      markerRef.current = null;
-    }
-    if (overlayRef.current) {
-      overlayRef.current.setMap(null);
-      overlayRef.current = null;
-    }
+    setToggle(false);
+    clearMarker();
+    clearSearchedMarker();
   };
 
   return {
-    places,
-    setPlaces,
-    toggle,
-    setToggle,
     selectedPlaceId,
     setSelectedPlaceId,
     handleUploadClick,
     handleCurrentLocationClick,
     selectedMomentMarker,
     setSelectedMomentMarker,
+    addSearchedMarker,
+    searchedPlace,
   };
 }

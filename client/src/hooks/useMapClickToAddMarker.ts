@@ -3,7 +3,7 @@ import { Place } from "../types/Place";
 import { Post } from "../types/Post";
 
 interface useMapClickToAddMarkerProps {
-  map: kakao.maps.Map;
+  map: kakao.maps.Map | null;
   setSelectedMarker: (place: Place | null) => void;
   setSelectedMomentMarker: (post: Post | null) => void;
 }
@@ -14,6 +14,7 @@ export default function useMapClickToAddMarker({
   setSelectedMomentMarker,
 }: useMapClickToAddMarkerProps) {
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
+  const [mapClicked, setMapClicked] = useState(false);
   const markerRef = useRef<kakao.maps.Marker | null>(null);
   const overlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
 
@@ -34,13 +35,7 @@ export default function useMapClickToAddMarker({
               result[0]?.address?.address_name ||
               "주소 정보를 가져올 수 없음";
 
-            if (markerRef.current) {
-              markerRef.current.setMap(null);
-            }
-
-            if (overlayRef.current) {
-              overlayRef.current.setMap(null);
-            }
+            clearMarker();
 
             const newMarker = new kakao.maps.Marker({
               position: latlng,
@@ -50,27 +45,18 @@ export default function useMapClickToAddMarker({
 
             const content = document.createElement("div");
             content.innerHTML = `
-            <div style="
-              background-color: white;
-              padding: 5px 10px;
-              border-radius: 5px;
-              box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-              font-size: 14px;
-              font-weight: bold;
-              text-align: center;
-              white-space: nowrap;
-            ">
-              ${addressInfo}
-            </div>
-          `;
-
+              <div style="padding: 12px; background: rgba(255, 255, 255, 0.95); border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
+                <p style="margin: 0; font-size: 14px; color: #555;">
+                  📍 ${addressInfo}
+                </p>
+              </div>
+            `;
             const newOverlay = new kakao.maps.CustomOverlay({
               content: content,
               position: latlng,
-              yAnchor: 2.7,
+              yAnchor: 2,
               map: map,
             });
-
             overlayRef.current = newOverlay;
 
             setSelectedMarker({
@@ -89,6 +75,7 @@ export default function useMapClickToAddMarker({
                 `clicked_marker`
             );
             setSelectedMomentMarker(null);
+            setMapClicked(true);
           }
         }
       );
@@ -98,8 +85,27 @@ export default function useMapClickToAddMarker({
 
     return () => {
       kakao.maps.event.removeListener(map, "click", handleMapClick);
+      clearMarker();
     };
   }, [map, setSelectedMarker, setSelectedMomentMarker]);
 
-  return { markerRef, overlayRef, selectedPlaceId, setSelectedPlaceId };
+  const clearMarker = () => {
+    if (markerRef.current && overlayRef.current) {
+      markerRef.current.setMap(null);
+      overlayRef.current.setMap(null);
+      setMapClicked(false);
+      markerRef.current = null;
+      overlayRef.current = null;
+    }
+  };
+
+  return {
+    markerRef,
+    overlayRef,
+    selectedPlaceId,
+    setSelectedPlaceId,
+    mapClicked,
+    setMapClicked,
+    clearMarker,
+  };
 }

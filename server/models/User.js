@@ -10,6 +10,12 @@ const UserSchema = new mongoose.Schema(
         createdAt: { type: Date, required: true },
       },
     ],
+    recentSearches: [
+      {
+        query: { type: String },
+        searchedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   {
     timestamps: true,

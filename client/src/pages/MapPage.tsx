@@ -1,24 +1,20 @@
-import SearchLocation from "../components/map/SearchLocation";
-import MapMarkerController from "../components/map/MapMarkerController";
+import SearchForm from "../components/map/SearchForm";
 import HamburgerButton from "../components/common/HamburgerButton";
 import BottomCard from "../components/common/BottomCard";
 import styled from "styled-components";
 import MapControls from "../components/map/MapControls";
 import useMapPageLogic from "../hooks/useMapPageLogic";
+import { useState } from "react";
 
 export default function MapPage({ showModal }: { showModal: () => void }) {
+  const [toggle, setToggle] = useState(false);
   const {
-    places,
-    setPlaces,
-    toggle,
-    setToggle,
-    selectedPlaceId,
     setSelectedPlaceId,
     handleUploadClick,
     handleCurrentLocationClick,
     selectedMomentMarker,
     setSelectedMomentMarker,
-  } = useMapPageLogic();
+  } = useMapPageLogic({ setToggle });
 
   return (
     <div>
@@ -31,21 +27,12 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
         onLocation={handleCurrentLocationClick}
       />
       <OverlayWrapper toggle={toggle}>
-        <MapMarkerController
-          places={places}
-          selectedPlaceId={selectedPlaceId}
-          onSelect={(placeId) => {
-            setSelectedPlaceId(placeId);
-          }}
-        />
         {toggle && (
-          <SearchLocation
-            onUpdatePlaces={(places) => {
-              setPlaces(places);
-            }}
+          <SearchForm
             onSelect={(placeId) => {
               setSelectedPlaceId(placeId);
             }}
+            setToggle={setToggle}
           />
         )}
       </OverlayWrapper>
@@ -67,5 +54,10 @@ const OverlayWrapper = styled.div.withConfig({
   width: ${(props) => (props.toggle ? "25%" : "0")};
   height: 100%;
   z-index: 3;
+  display: flex;
   overflow-y: auto;
+
+  box-shadow: ${(props) =>
+    props.toggle ? "4px 0 10px rgba(0, 0, 0, 0.2)" : "none"};
+  transition: width 0.3s ease, box-shadow 0.3s ease;
 `;

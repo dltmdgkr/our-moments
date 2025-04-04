@@ -33,11 +33,11 @@ export default function usePresignedUpload({
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (title.trim() === "" || description.trim() === "") {
-      toast.error("제목과 내용을 입력해주세요.");
+      toast.error("제목과 내용을 입력해주세요.", { autoClose: 3000 });
       return;
     }
     if (!files) {
-      toast.error("사진을 업로드 해주세요.");
+      toast.error("사진을 업로드 해주세요.", { autoClose: 3000 });
       return;
     }
     try {
@@ -104,7 +104,7 @@ export default function usePresignedUpload({
       }, 3000);
     } catch (err) {
       console.error(err);
-      toast.error("이미지 업로드에 실패했습니다.");
+      toast.error("이미지 업로드에 실패했습니다.", { autoClose: 3000 });
       setSelectedMarker(null);
       setTitle("");
       setDescription("");

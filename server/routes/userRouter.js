@@ -121,4 +121,47 @@ userRouter.get("/me/images", async (req, res) => {
   }
 });
 
+userRouter.post("/searches", async (req, res) => {
+  if (!req.user) return;
+  try {
+    const { query } = req.body;
+
+    if (!query) throw new Error("검색어를 입력해주세요.");
+
+    const user = await User.findById(req.user._id);
+
+    user.recentSearches = user.recentSearches.filter(
+      (search) => search.query !== query
+    );
+
+    user.recentSearches.unshift({ query, searchedAt: new Date() });
+
+    if (user.recentSearches.length > 10) {
+      user.recentSearches.pop();
+    }
+
+    await user.save();
+
+    res.json({
+      message: "검색어 저장 완료",
+      recentSearches: user.recentSearches,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+userRouter.get("/searches", async (req, res) => {
+  try {
+    if (!req.user) return;
+
+    const user = await User.findById(req.user._id).select("recentSearches");
+
+    res.json({ recentSearches: user.recentSearches });
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 module.exports = { userRouter };

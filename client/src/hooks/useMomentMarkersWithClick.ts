@@ -6,12 +6,14 @@ interface useMomentMarkersWithClickProps {
   map: kakao.maps.Map;
   moments: Post[];
   setSelectedMomentMarker: (post: Post | null) => void;
+  setToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function useMomentMarkersWithClick({
   map,
   moments,
   setSelectedMomentMarker,
+  setToggle,
 }: useMomentMarkersWithClickProps) {
   const markersRef = useRef<kakao.maps.Marker[]>([]);
 
@@ -55,6 +57,7 @@ export default function useMomentMarkersWithClick({
           createdAt: moment.createdAt,
           public: moment.public,
         });
+        setToggle(false);
       });
     });
   }, [map, moments, setSelectedMomentMarker]);

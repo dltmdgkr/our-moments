@@ -6,8 +6,6 @@ const { userRouter } = require("./routes/userRouter");
 const { authenticate } = require("./middleware/authentication");
 const { postRouter } = require("./routes/postRouter");
 
-// deploy.yml test 주석
-
 const app = express();
 const { MONGO_URI, PORT } = process.env;
 

@@ -11,8 +11,8 @@ import UploadPage from "./pages/UploadPage";
 import DynamicMap from "./components/map/DynamicMap";
 import { useState } from "react";
 import { MenuModal } from "./components/modal/MenuModal";
-import MapMarkerProvider from "./context/MapMarkerProvider";
 import MomentMarkerProvider from "./context/MomentMarkerProvider";
+import MapMarkerProvider from "./context/MapMarkerProvider";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);

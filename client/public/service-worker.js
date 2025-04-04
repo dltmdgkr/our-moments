@@ -42,6 +42,8 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
   if (event.request.mode === "navigate") {
     event.respondWith(
       caches.match(event.request).then((response) => {
