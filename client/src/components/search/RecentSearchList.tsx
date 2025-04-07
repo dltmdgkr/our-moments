@@ -1,14 +1,74 @@
+import styled from "styled-components";
+import { Place } from "../../types/Place";
+
 interface Props {
-  items: string[];
+  places: Place[];
+  onClick: (place: Place) => void;
+  onDelete: (place: Place) => void;
 }
 
-export default function RecentSearchList({ items }: Props) {
+export default function RecentSearchList({ places, onClick, onDelete }: Props) {
   return (
-    <>
-      <h4>최근 검색어</h4>
-      {items.map((item, index) => (
-        <div key={index}>{item}</div>
-      ))}
-    </>
+    <Container>
+      <Title>최근 검색어</Title>
+      <List>
+        {places.map((place) => (
+          <Item key={place.id}>
+            <Text onClick={() => onClick(place)}>{place.title}</Text>
+            <DeleteButton onClick={() => onDelete(place)}>✕</DeleteButton>
+          </Item>
+        ))}
+      </List>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+`;
+
+const Title = styled.h4`
+  margin: 4px 0 16px 8px;
+  font-size: 16px;
+  color: #333;
+`;
+
+const List = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const Item = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #f1f3f5;
+  padding: 6px 10px 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e0e4e7;
+  }
+`;
+
+const Text = styled.span`
+  margin-right: 6px;
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+`;

@@ -124,17 +124,36 @@ userRouter.get("/me/images", async (req, res) => {
 userRouter.post("/searches", async (req, res) => {
   if (!req.user) return;
   try {
-    const { query } = req.body;
+    const { place } = req.body;
 
-    if (!query) throw new Error("검색어를 입력해주세요.");
+    if (
+      !place ||
+      !place.id ||
+      !place.title ||
+      !place.position ||
+      !place.address
+    ) {
+      throw new Error("잘못된 장소 정보입니다.");
+    }
 
     const user = await User.findById(req.user._id);
 
     user.recentSearches = user.recentSearches.filter(
-      (search) => search.query !== query
+      (search) => search.place && search.place.id !== place.id
     );
 
-    user.recentSearches.unshift({ query, searchedAt: new Date() });
+    user.recentSearches.unshift({
+      place: {
+        id: place.id,
+        position: {
+          lat: place.position.lat,
+          lng: place.position.lng,
+        },
+        title: place.title,
+        address: place.address,
+      },
+      searchedAt: new Date(),
+    });
 
     if (user.recentSearches.length > 10) {
       user.recentSearches.pop();
@@ -159,6 +178,31 @@ userRouter.get("/searches", async (req, res) => {
     const user = await User.findById(req.user._id).select("recentSearches");
 
     res.json({ recentSearches: user.recentSearches });
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+userRouter.delete("/searches", async (req, res) => {
+  try {
+    if (!req.user) return;
+
+    const { place } = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if (place) {
+      user.recentSearches = user.recentSearches.filter(
+        (search) => search.place && search.place.id !== place.id
+      );
+    }
+
+    await user.save();
+
+    res.json({
+      message: "검색어가 삭제되었습니다.",
+      recentSearches: user.recentSearches,
+    });
   } catch (err) {
     console.error(err);
   }

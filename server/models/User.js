@@ -1,5 +1,18 @@
 const mongoose = require("mongoose");
 
+const PlaceSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true },
+    position: {
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
+    },
+    title: { type: String, required: true },
+    address: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -12,7 +25,7 @@ const UserSchema = new mongoose.Schema(
     ],
     recentSearches: [
       {
-        query: { type: String },
+        place: { type: PlaceSchema },
         searchedAt: { type: Date, default: Date.now },
       },
     ],

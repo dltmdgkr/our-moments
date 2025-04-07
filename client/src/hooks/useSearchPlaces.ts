@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import useDebounce from "./useDebounce";
 import { Place } from "../types/Place";
 import { axiosInstance } from "../utils/axiosInstance";
+import { extractLatLng } from "../utils/extractLatLng";
 
 export default function useSearchPlaces() {
   const [keyword, setKeyword] = useState("");
@@ -37,8 +38,22 @@ export default function useSearchPlaces() {
     }
   }, [debouncedKeyword]);
 
-  const searchPlace = async (query: string) => {
-    await axiosInstance.post("/users/searches", { query });
+  const searchPlace = async (place: Place) => {
+    try {
+      const { lat, lng } = extractLatLng(place.position);
+      const convertedPlace = {
+        id: place.id,
+        title: place.title,
+        address: place.address,
+        position: {
+          lat,
+          lng,
+        },
+      };
+      await axiosInstance.post("/users/searches", { place: convertedPlace });
+    } catch (err) {
+      console.error("❌ searchPlace error:", err);
+    }
   };
 
   return { keyword, setKeyword, suggestions, searchPlace };

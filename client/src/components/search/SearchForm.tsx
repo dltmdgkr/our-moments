@@ -33,7 +33,7 @@ export default function SearchForm({
   });
   const { addSearchedMarker } = useMapPageLogic({ setToggle });
   const { keyword, setKeyword, suggestions, searchPlace } = useSearchPlaces();
-  const { recentSearches } = useRecentSearches();
+  const { recentSearches, handleDelete } = useRecentSearches();
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
@@ -42,8 +42,12 @@ export default function SearchForm({
   const handleItemClick = async (place: Place) => {
     try {
       clearMarker();
-      await searchPlace(place.title);
-      map.setCenter(place.position);
+      await searchPlace(place);
+      const centerPosition =
+        place.position instanceof kakao.maps.LatLng
+          ? place.position
+          : new kakao.maps.LatLng(place.position.lat, place.position.lng);
+      map.setCenter(centerPosition);
       map.setLevel(4);
       onSelect(place.id);
       setSelectedMarker(place);
@@ -58,6 +62,14 @@ export default function SearchForm({
     <Container>
       <SearchInput ref={inputRef} keyword={keyword} setKeyword={setKeyword} />
       <StyledList>
+        {recentSearches.length > 0 && (
+          <RecentSearchList
+            places={recentSearches}
+            onDelete={handleDelete}
+            onClick={handleItemClick}
+          />
+        )}
+
         {keyword && suggestions.length > 0 ? (
           <SuggestionList
             suggestions={suggestions}
@@ -66,10 +78,6 @@ export default function SearchForm({
         ) : keyword && suggestions.length === 0 ? (
           <div>일치하는 검색 결과가 없습니다.</div>
         ) : null}
-
-        {!keyword && recentSearches.length > 0 && (
-          <RecentSearchList items={recentSearches} />
-        )}
 
         {!keyword && recentSearches.length === 0 && (
           <div>최근 검색 내역이 없습니다.</div>
