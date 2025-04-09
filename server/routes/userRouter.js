@@ -208,4 +208,60 @@ userRouter.delete("/searches", async (req, res) => {
   }
 });
 
+userRouter.post("/searches/merge", async (req, res) => {
+  if (!req.user) return;
+
+  try {
+    const { places } = req.body;
+
+    if (!Array.isArray(places)) {
+      throw new Error("유효하지 않은 병합 데이터입니다.");
+    }
+
+    const user = await User.findById(req.user._id);
+
+    const existingIds = new Set(
+      user.recentSearches.map((search) => search.place?.id)
+    );
+
+    const newSearches = places
+      .filter(
+        (place) =>
+          place?.id && place?.title && place?.position && place?.address
+      )
+      .filter((place) => !existingIds.has(place.id))
+      .map((place) => ({
+        place: {
+          id: place.id,
+          position: {
+            lat: place.position.lat,
+            lng: place.position.lng,
+          },
+          title: place.title,
+          address: place.address,
+        },
+        searchedAt: new Date(),
+      }));
+
+    const merged = [...newSearches, ...user.recentSearches]
+      .sort(
+        (a, b) =>
+          new Date(b.searchedAt).getTime() - new Date(a.searchedAt).getTime()
+      )
+      .slice(0, 10);
+
+    user.recentSearches = merged;
+
+    await user.save();
+
+    res.json({
+      message: "guest 검색어와 병합 완료",
+      recentSearches: user.recentSearches,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
 module.exports = { userRouter };

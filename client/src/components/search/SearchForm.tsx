@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { useMap } from "../../hooks/useMap";
 import { Place } from "../../types/Place";
@@ -11,6 +11,9 @@ import useRecentSearches from "../../hooks/useRecentSearches";
 import useSearchPlaces from "../../hooks/useSearchPlaces";
 import SuggestionList from "./SuggestionList";
 import SearchInput from "./SearchInput";
+import { AuthContext } from "../../context/AuthProvider";
+import { saveToLocalRecentSearches } from "../../utils/saveToLocalRecentSearches";
+import SkeletonRecentSearches from "./SkeletonRecentSearches";
 
 interface SearchLocationProps {
   setToggle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,6 +25,7 @@ export default function SearchForm({
   onSelect,
 }: SearchLocationProps) {
   const map = useMap();
+  const { me } = useContext(AuthContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { setSelectedMarker } = useMapMarker();
@@ -33,7 +37,7 @@ export default function SearchForm({
   });
   const { addSearchedMarker } = useMapPageLogic({ setToggle });
   const { keyword, setKeyword, suggestions, searchPlace } = useSearchPlaces();
-  const { recentSearches, handleDelete } = useRecentSearches();
+  const { recentSearches, handleDelete, isLoading } = useRecentSearches();
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
@@ -42,7 +46,11 @@ export default function SearchForm({
   const handleItemClick = async (place: Place) => {
     try {
       clearMarker();
-      await searchPlace(place);
+      if (me) {
+        await searchPlace(place);
+      } else {
+        saveToLocalRecentSearches(place);
+      }
       const centerPosition =
         place.position instanceof kakao.maps.LatLng
           ? place.position
@@ -62,7 +70,11 @@ export default function SearchForm({
     <Container>
       <SearchInput ref={inputRef} keyword={keyword} setKeyword={setKeyword} />
       <StyledList>
-        {recentSearches.length > 0 && (
+        {isLoading ? (
+          <SkeletonRecentSearches />
+        ) : recentSearches.length === 0 ? (
+          <p className="text-gray-400 text-sm">최근 검색 내역이 없습니다.</p>
+        ) : (
           <RecentSearchList
             places={recentSearches}
             onDelete={handleDelete}
@@ -78,10 +90,6 @@ export default function SearchForm({
         ) : keyword && suggestions.length === 0 ? (
           <div>일치하는 검색 결과가 없습니다.</div>
         ) : null}
-
-        {!keyword && recentSearches.length === 0 && (
-          <div>최근 검색 내역이 없습니다.</div>
-        )}
       </StyledList>
     </Container>
   );
