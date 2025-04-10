@@ -1,6 +1,9 @@
 import { NavigateFunction } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Post } from "../../types/Post";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import styled from "styled-components";
+import { BaseButton } from "./PostActionButtons";
 
 interface MoveToLocationButtonProps {
   position: kakao.maps.LatLng;
@@ -22,5 +25,20 @@ export default function MoveToLocationButton({
     navigate("/", { state: { position } });
     setSelectedMomentMarker(null);
   };
-  return <button onClick={moveToLocation}>위치 보기</button>;
+
+  return (
+    <LocationButton onClick={moveToLocation}>
+      <FaMapMarkerAlt />
+      위치 보기
+    </LocationButton>
+  );
 }
+
+const LocationButton = styled(BaseButton)`
+  color: #374151;
+  border: 1px solid #e5e7eb;
+
+  svg {
+    color: #0077cc;
+  }
+`;

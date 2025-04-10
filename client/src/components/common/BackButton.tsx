@@ -13,9 +13,9 @@ export default function BackButton() {
 }
 
 const BackIcon = styled(IoArrowBack)`
-  position: sticky;
-  top: 10px;
-  left: 0px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
   font-size: 24px;
   background-color: white;
   padding: 10px;

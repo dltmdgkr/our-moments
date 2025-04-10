@@ -16,51 +16,159 @@ export default function ImageDetailPage() {
     useImageDetail(postId);
   const { setSelectedMomentMarker } = useMomentMarker();
 
+  function formatDate(dateString: Date) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}년 ${
+      date.getMonth() + 1
+    }월 ${date.getDate()}일의 기록`;
+  }
+
   if (!post) return <div>Loading...</div>;
 
   return (
-    <div>
-      <BackButton />
-      <h3>ImageDetailPage {postId}</h3>
-      <ImageDetailGallery images={post.images} />
-      <LocationInfo location={post.location} />
-      <h2>{post.title}</h2>
-      <DescriptionArea>{post.description}</DescriptionArea>
-      <div>좋아요 {post.likes.length}</div>
-      <MoveToLocationButton
-        position={post.position}
-        navigate={navigate}
-        setSelectedMomentMarker={setSelectedMomentMarker}
-      />
-      <PostActionButtons
-        hasLiked={hasLiked}
-        likeHandler={() =>
-          likeHandler({
-            postId,
-            hasLiked,
-            me,
-            setHasLiked,
-            setPosts,
-            setMyPrivatePosts,
-          })
-        }
-        deleteHandler={() =>
-          deleteHandler({
-            postId,
-            post,
-            setPosts,
-            setMyPrivatePosts,
-            navigate,
-            setSelectedMomentMarker,
-          })
-        }
-        isOwner={post.user._id === me?.userId}
-      />
-    </div>
+    <>
+      <GalleryWrapper>
+        <ImageDetailGallery images={post.images} />
+        <BackButton />
+      </GalleryWrapper>
+
+      <Content>
+        <Title>{post.title}</Title>
+
+        <InfoBlock>
+          <LocationText>{post.location}</LocationText>
+          {post.createdAt && (
+            <VisitedDate>{formatDate(post.createdAt)}</VisitedDate>
+          )}
+        </InfoBlock>
+
+        <Description>{post.description}</Description>
+
+        <PostFooter>
+          <LikeCount>❤️ 좋아요 · {post.likes.length}</LikeCount>
+
+          <ButtonGroup>
+            <MoveToLocationButton
+              position={post.position}
+              navigate={navigate}
+              setSelectedMomentMarker={setSelectedMomentMarker}
+            />
+
+            <PostActionButtons
+              hasLiked={hasLiked}
+              likeHandler={() =>
+                likeHandler({
+                  postId,
+                  hasLiked,
+                  me,
+                  setHasLiked,
+                  setPosts,
+                  setMyPrivatePosts,
+                })
+              }
+              deleteHandler={() =>
+                deleteHandler({
+                  postId,
+                  post,
+                  setPosts,
+                  setMyPrivatePosts,
+                  navigate,
+                  setSelectedMomentMarker,
+                })
+              }
+              isOwner={post.user._id === me?.userId}
+            />
+          </ButtonGroup>
+        </PostFooter>
+      </Content>
+    </>
   );
 }
 
-const DescriptionArea = styled.p`
+const GalleryWrapper = styled.div`
+  position: relative;
+`;
+
+const Content = styled.div`
+  padding: 28px 20px;
+`;
+
+const Title = styled.h2`
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f1f1f;
+  margin-bottom: 24px;
+`;
+
+const InfoBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+`;
+
+const LocationText = styled.div`
+  font-size: 16px;
+  color: #3d3d3d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+
+  &::before {
+    content: "📍";
+  }
+`;
+
+const VisitedDate = styled.div`
+  font-size: 14px;
+  color: #777;
+  font-weight: 400;
+  margin-left: 2px;
+
+  &::before {
+    content: "🕓 ";
+    margin-right: 4px;
+  }
+`;
+
+const Description = styled.p`
   white-space: pre-wrap;
-  overflow-wrap: break-word;
+  word-break: break-word;
+  background: #f8f8f8;
+  padding: 20px 22px;
+  border-radius: 14px;
+  margin-bottom: 40px;
+  font-size: 16px;
+  color: #2e2e2e;
+  line-height: 1.75;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const LikeCount = styled.div`
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 16px;
+`;
+
+const PostFooter = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #eaeaea;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
