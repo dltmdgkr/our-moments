@@ -72,8 +72,6 @@ export default function SearchForm({
       <StyledList>
         {isLoading ? (
           <SkeletonRecentSearches />
-        ) : recentSearches.length === 0 ? (
-          <p className="text-gray-400 text-sm">최근 검색 내역이 없습니다.</p>
         ) : (
           <RecentSearchList
             places={recentSearches}
@@ -88,7 +86,9 @@ export default function SearchForm({
             onSelect={handleItemClick}
           />
         ) : keyword && suggestions.length === 0 ? (
-          <div>일치하는 검색 결과가 없습니다.</div>
+          <EmptyMessage>
+            <span>🔍</span> 일치하는 검색 결과가 없습니다.
+          </EmptyMessage>
         ) : null}
       </StyledList>
     </Container>
@@ -105,4 +105,19 @@ const StyledList = styled.ul`
   list-style: none;
   margin: 16px 0 0;
   padding: 0;
+`;
+
+const EmptyMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #fff;
+  padding: 16px;
+  margin-top: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #777;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
 `;

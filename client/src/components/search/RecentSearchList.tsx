@@ -11,14 +11,20 @@ export default function RecentSearchList({ places, onClick, onDelete }: Props) {
   return (
     <Container>
       <Title>최근 검색어</Title>
-      <List>
-        {places.map((place) => (
-          <Item key={place.id}>
-            <Text onClick={() => onClick(place)}>{place.title}</Text>
-            <DeleteButton onClick={() => onDelete(place)}>✕</DeleteButton>
-          </Item>
-        ))}
-      </List>
+      {places.length === 0 ? (
+        <EmptyMessage>
+          <span>📭</span> 최근 검색 내역이 없습니다.
+        </EmptyMessage>
+      ) : (
+        <List>
+          {places.map((place) => (
+            <Item key={place.id}>
+              <Text onClick={() => onClick(place)}>{place.title}</Text>
+              <DeleteButton onClick={() => onDelete(place)}>✕</DeleteButton>
+            </Item>
+          ))}
+        </List>
+      )}
     </Container>
   );
 }
@@ -35,6 +41,15 @@ const Title = styled.h4`
   margin: 4px 0 16px 8px;
   font-size: 16px;
   color: #333;
+`;
+
+const EmptyMessage = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #888;
+  font-size: 14px;
+  padding: 12px 0 4px 8px;
 `;
 
 const List = styled.div`

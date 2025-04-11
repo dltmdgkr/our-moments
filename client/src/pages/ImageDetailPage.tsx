@@ -3,7 +3,6 @@ import BackButton from "../components/common/BackButton";
 import { useMomentMarker } from "../context/MomentMarkerProvider";
 import ImageDetailGallery from "../components/gallery/ImageDetailGallery";
 import useImageDetail from "../hooks/useImageDetail";
-import LocationInfo from "../components/gallery/LocationInfo";
 import PostActionButtons from "../components/gallery/PostActionButtons";
 import { deleteHandler, likeHandler } from "../utils/postActions";
 import MoveToLocationButton from "../components/gallery/MoveToLocationButton";
@@ -34,26 +33,21 @@ export default function ImageDetailPage() {
 
       <Content>
         <Title>{post.title}</Title>
-
         <InfoBlock>
           <LocationText>{post.location}</LocationText>
           {post.createdAt && (
             <VisitedDate>{formatDate(post.createdAt)}</VisitedDate>
           )}
         </InfoBlock>
-
         <Description>{post.description}</Description>
-
         <PostFooter>
           <LikeCount>❤️ 좋아요 · {post.likes.length}</LikeCount>
-
           <ButtonGroup>
             <MoveToLocationButton
               position={post.position}
               navigate={navigate}
               setSelectedMomentMarker={setSelectedMomentMarker}
             />
-
             <PostActionButtons
               hasLiked={hasLiked}
               likeHandler={() =>

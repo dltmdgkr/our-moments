@@ -39,6 +39,6 @@ const LocationButton = styled(BaseButton)`
   border: 1px solid #e5e7eb;
 
   svg {
-    color: #0077cc;
+    color: #ff8c00;
   }
 `;

@@ -47,6 +47,7 @@ export default function UploadContainer({
       percent={percent}
       isPublic={isPublic}
       inputRef={inputRef}
+      selectedMarker={selectedMarker}
       onSubmit={onSubmit}
       setTitle={setTitle}
       setDescription={setDescription}

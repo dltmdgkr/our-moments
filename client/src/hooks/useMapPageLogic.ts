@@ -87,10 +87,6 @@ export default function useMapPageLogic({ setToggle }: useMapPageLogicProps) {
   ]);
 
   const handleUploadClick = () => {
-    if (!me) {
-      toast.error("로그인이 필요합니다.");
-      return;
-    }
     if (!selectedPlaceId) {
       alert("위치를 먼저 선택해주세요!");
       return;

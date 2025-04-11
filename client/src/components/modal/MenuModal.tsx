@@ -98,8 +98,9 @@ const Wrapper = styled.div`
 const Lists = styled(motion.ul)`
   width: 25%;
   height: 100vh;
-  background: #fff;
-  color: #000;
+  background: #fdfdfd;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  color: #333;
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -108,12 +109,21 @@ const Lists = styled(motion.ul)`
 `;
 
 const List = styled.li`
-  padding: 15px 20px;
-  font-size: 18px;
-  border-bottom: 1px solid #ddd;
-  background: #fff;
+  padding: 16px 24px;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  transition: background-color 0.2s ease;
+
+  a,
+  span {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+  }
 
   &:hover {
-    background: none;
+    background-color: #f2f2f2;
   }
 `;

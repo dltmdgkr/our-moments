@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Place } from "../types/Place";
 import { Preview } from "../components/gallery/UploadContainer";
+import { AuthContext } from "../context/AuthProvider";
 
 interface usePresignedUploadProps {
   files: File[] | null;
@@ -22,6 +23,7 @@ export default function usePresignedUpload({
   setSelectedMarker,
   setPreviews,
 }: usePresignedUploadProps) {
+  const { me } = useContext(AuthContext);
   const { setPosts, setMyPrivatePosts } = useContext(PostContext);
   const [percent, setPercent] = useState<number[]>([]);
   const [isPublic, setIsPublic] = useState(true);
@@ -32,6 +34,10 @@ export default function usePresignedUpload({
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    if (!me) {
+      toast.error("로그인이 필요합니다.", { autoClose: 3000 });
+      return;
+    }
     if (title.trim() === "" || description.trim() === "") {
       toast.error("제목과 내용을 입력해주세요.", { autoClose: 3000 });
       return;
@@ -88,7 +94,7 @@ export default function usePresignedUpload({
         setMyPrivatePosts((prevData) => [res.data, ...prevData]);
       }
 
-      toast.success("이미지가 성공적으로 업로드되었습니다!", {
+      toast.success("이미지가 성공적으로 업로드되었습니다.", {
         autoClose: 3000,
       });
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { PostContext } from "../../context/PostProvider";
 import { AuthContext } from "../../context/AuthProvider";
+import { HiOutlineLocationMarker } from "react-icons/hi";
 
 export default function ImageList() {
   const { me } = useContext(AuthContext);
@@ -22,24 +23,37 @@ export default function ImageList() {
     }
     setIsPublic((prev) => !prev);
   };
-
   const postList = (isPublic ? posts : myPrivatePosts).map((post, index) => (
-    <Link key={`${post._id}-${index}`} to={`/images/${post._id}`}>
-      <StyledImage
-        src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
-        alt="업로드 이미지"
-      />
-    </Link>
+    <Card key={`${post._id}-${index}`}>
+      <StyledLink to={`/images/${post._id}`}>
+        <StyledImage
+          src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
+          alt="업로드 이미지"
+        />
+        <Overlay>
+          <TopMeta>
+            <HiOutlineLocationMarker />
+            <LocationText>
+              {post.location.split(" ").slice(0, 3).join(" ")}
+            </LocationText>
+          </TopMeta>
+          <Title>{post.title || "제목 없음"}</Title>
+          <Description>{post.description || "설명 없음"}</Description>
+        </Overlay>
+      </StyledLink>
+    </Card>
   ));
 
   return (
     <Wrapper>
-      <div>
-        <Title>Image List {isPublic ? "공개" : "개인"} 사진</Title>
+      <Header>
+        <TitleText>
+          {isPublic ? "🌍 모두의 순간들" : "🔒 나만의 추억들"}
+        </TitleText>
         <ToggleButton onClick={handleTogglePublic}>
-          {(isPublic ? "개인" : "공개") + "사진 보기"}
+          {isPublic ? "🔒 개인 사진 보기" : "📂 공개 사진 보기"}
         </ToggleButton>
-      </div>
+      </Header>
       <ImageListContainer>
         {postList.length > 0
           ? postList
@@ -48,84 +62,151 @@ export default function ImageList() {
       {postLoading ? (
         <div>Loading...</div>
       ) : (
-        <LoadMoreButton onClick={loadMorePosts}>Load More Posts</LoadMoreButton>
+        <LoadMoreButton onClick={loadMorePosts}>
+          ⬇️ 더 많은 순간들이 숨어있어요
+        </LoadMoreButton>
       )}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
-  width: 50%;
+  width: 80%;
   min-height: 100vh;
-  height: 100%;
   margin: 0 auto;
+  padding: 20px;
 `;
 
-const Title = styled.h3`
-  display: inline-block;
-  margin-right: 10px;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const TitleText = styled.h3`
+  font-size: 28px;
+  font-weight: 600;
+  color: #2d2d2d;
+  letter-spacing: -0.5px;
 `;
 
 const ToggleButton = styled.button`
   cursor: pointer;
-  padding: 8px 12px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  color: #444;
+  border-radius: 20px;
   font-size: 14px;
+  transition: all 0.2s ease;
+
   &:hover {
-    background-color: #0056b3;
+    background-color: #ececec;
+    border-color: #aaa;
   }
 `;
 
 const ImageListContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const Card = styled.div`
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  background-color: #111;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+const StyledLink = styled(Link)`
+  display: block;
+  color: inherit;
+  text-decoration: none;
 `;
 
 const StyledImage = styled.img`
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 400px;
   object-fit: cover;
-  transition: opacity 0.2s, box-shadow 0.2s;
-  &:hover {
-    box-shadow: 4px 4px 4px grey;
-    opacity: 0.7;
-    cursor: pointer;
-  }
+`;
 
-  @media (max-width: 835px) {
-    min-width: 400px;
-    width: 100%;
-    height: 200px;
-  }
+const Overlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 60%);
+  color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`;
 
-  @media (max-width: 768px) {
-    min-width: 300px;
-    width: 100%;
-    height: 200px;
-  }
+const TopMeta = styled.div`
+  display: flex;
+  align-items: flex-start;
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 8px;
 
-  @media (max-width: 480px) {
-    min-width: 200px;
-    width: 100%;
-    height: 200px;
+  svg {
+    margin-right: 4px;
+    color: #aaa;
   }
 `;
 
+const LocationText = styled.span`
+  font-weight: 400;
+`;
+
+const Title = styled.h4`
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 4px 0;
+`;
+
+const Description = styled.p`
+  font-size: 13px;
+  color: #ccc;
+  margin: 0;
+`;
+
 const LoadMoreButton = styled.button`
-  cursor: pointer;
-  padding: 8px 12px;
+  margin: 32px auto 0;
+  display: block;
+  padding: 12px 24px;
+  font-size: 15px;
   border: none;
-  background-color: #28a745;
-  color: white;
-  border-radius: 5px;
-  font-size: 14px;
-  margin-top: 10px;
+  border-radius: 32px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-weight: 500;
+  transition: transform 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  animation: bounce 2.5s infinite ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
   &:hover {
-    background-color: #218838;
+    background-color: #333;
+    cursor: pointer;
+  }
+
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
   }
 `;
