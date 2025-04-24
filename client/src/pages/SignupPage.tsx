@@ -2,10 +2,10 @@ import HamburgerButton from "../components/common/HamburgerButton";
 import SignupContainer from "../components/auth/SignupContainer";
 import styled from "styled-components";
 
-export default function SignupPage({ showModal }: { showModal: () => void }) {
+export default function SignupPage() {
   return (
     <>
-      <HamburgerButton showModal={showModal} position="sticky" />
+      <HamburgerButton position="sticky" />
       <Heading>회원가입</Heading>
       <SignupContainer />
     </>

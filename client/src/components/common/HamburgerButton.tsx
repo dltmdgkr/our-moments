@@ -1,14 +1,10 @@
 import { GiHamburgerMenu } from "react-icons/gi";
 import styled from "styled-components";
+import { useMenuModal } from "../../context/MenuModalProvider";
 
-export default function HamburgerButton({
-  showModal,
-  position,
-}: {
-  showModal: () => void;
-  position: string;
-}) {
-  return <StyledHamburgerButton onClick={showModal} position={position} />;
+export default function HamburgerButton({ position }: { position: string }) {
+  const { toggleModal } = useMenuModal();
+  return <StyledHamburgerButton onClick={toggleModal} position={position} />;
 }
 
 const StyledHamburgerButton = styled(GiHamburgerMenu)<{ position: string }>`

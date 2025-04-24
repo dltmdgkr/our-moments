@@ -4,11 +4,7 @@ import styled from "styled-components";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 import { axiosInstance } from "../../utils/axiosInstance";
-
-interface MenuModalProps {
-  openModal: boolean;
-  setOpenModal: (value: boolean) => void;
-}
+import { useMenuModal } from "../../context/MenuModalProvider";
 
 const modalVariants = {
   initial: {
@@ -31,7 +27,8 @@ const modalVariants = {
   },
 };
 
-export const MenuModal = ({ openModal, setOpenModal }: MenuModalProps) => {
+export const MenuModal = () => {
+  const { isOpen, closeModal } = useMenuModal();
   const { me, setMe, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -51,8 +48,8 @@ export const MenuModal = ({ openModal, setOpenModal }: MenuModalProps) => {
 
   return (
     <AnimatePresence>
-      {openModal ? (
-        <Wrapper onClick={() => setOpenModal(false)}>
+      {isOpen ? (
+        <Wrapper onClick={closeModal}>
           <Lists
             variants={modalVariants}
             initial="initial"

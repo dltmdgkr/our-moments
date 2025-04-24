@@ -9,52 +9,39 @@ import KakaoMapScriptLoader from "./components/map/KakaoMapScriptLoader";
 import MapPage from "./pages/MapPage";
 import UploadPage from "./pages/UploadPage";
 import DynamicMap from "./components/map/DynamicMap";
-import { useState } from "react";
 import { MenuModal } from "./components/modal/MenuModal";
 import MomentMarkerProvider from "./context/MomentMarkerProvider";
 import MapMarkerProvider from "./context/MapMarkerProvider";
 import EditPage from "./pages/EditPage";
+import { MenuModalProvider } from "./context/MenuModalProvider";
 
 function App() {
-  const [openModal, setOpenModal] = useState(false);
-
-  const showModal = () => {
-    setOpenModal((prev) => !prev);
-  };
-
   return (
     <>
       <MapMarkerProvider>
         <MomentMarkerProvider>
-          <MenuModal openModal={openModal} setOpenModal={setOpenModal} />
-          <ToastContainer />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <KakaoMapScriptLoader>
-                  <DynamicMap>
-                    <MapPage showModal={showModal} />
-                  </DynamicMap>
-                </KakaoMapScriptLoader>
-              }
-            />
-            <Route
-              path="/gallery"
-              element={<GalleryPage showModal={showModal} />}
-            />
-            <Route
-              path="/signup"
-              element={<SignupPage showModal={showModal} />}
-            />
-            <Route
-              path="/login"
-              element={<LoginPage showModal={showModal} />}
-            />
-            <Route path="/images/:postId" element={<ImageDetailPage />} />
-            <Route path="/upload" element={<UploadPage />} />
-            <Route path="/edit/:postId" element={<EditPage />} />
-          </Routes>
+          <MenuModalProvider>
+            <MenuModal />
+            <ToastContainer />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <KakaoMapScriptLoader>
+                    <DynamicMap>
+                      <MapPage />
+                    </DynamicMap>
+                  </KakaoMapScriptLoader>
+                }
+              />
+              <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/images/:postId" element={<ImageDetailPage />} />
+              <Route path="/upload" element={<UploadPage />} />
+              <Route path="/edit/:postId" element={<EditPage />} />
+            </Routes>
+          </MenuModalProvider>
         </MomentMarkerProvider>
       </MapMarkerProvider>
     </>

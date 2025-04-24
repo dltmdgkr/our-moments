@@ -6,7 +6,7 @@ import styled from "styled-components";
 import MapControls from "../components/map/MapControls";
 import useMapPageLogic from "../hooks/useMapPageLogic";
 
-export default function MapPage({ showModal }: { showModal: () => void }) {
+export default function MapPage() {
   const [toggle, setToggle] = useState(false);
   const {
     setSelectedPlaceId,
@@ -18,9 +18,7 @@ export default function MapPage({ showModal }: { showModal: () => void }) {
 
   return (
     <div>
-      {!toggle && (
-        <HamburgerButton showModal={showModal} position={"absolute"} />
-      )}
+      {!toggle && <HamburgerButton position={"absolute"} />}
       <MapControls
         onSearchToggle={() => setToggle((prev) => !prev)}
         onUpload={handleUploadClick}

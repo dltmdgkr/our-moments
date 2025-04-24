@@ -2,10 +2,10 @@ import HamburgerButton from "../components/common/HamburgerButton";
 import LoginContainer from "../components/auth/LoginContainer";
 import styled from "styled-components";
 
-export default function LoginPage({ showModal }: { showModal: () => void }) {
+export default function LoginPage() {
   return (
     <>
-      <HamburgerButton showModal={showModal} position={"sticky"} />
+      <HamburgerButton position={"sticky"} />
       <Heading>로그인</Heading>
       <LoginContainer />
     </>
