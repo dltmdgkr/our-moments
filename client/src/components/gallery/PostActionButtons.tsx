@@ -1,4 +1,5 @@
-import { FaHeart, FaRegHeart, FaTrashAlt } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 interface PostActionButtonsProps {
@@ -14,6 +15,8 @@ export default function PostActionButtons({
   deleteHandler,
   isOwner,
 }: PostActionButtonsProps) {
+  const navigate = useNavigate();
+  const { postId } = useParams();
   return (
     <>
       <LikeButton onClick={likeHandler} liked={hasLiked}>
@@ -21,10 +24,18 @@ export default function PostActionButtons({
         {hasLiked ? "좋아요 취소" : "좋아요"}
       </LikeButton>
       {isOwner && (
-        <DeleteButton onClick={deleteHandler}>
-          <FaTrashAlt />
-          삭제
-        </DeleteButton>
+        <>
+          <EditButton
+            onClick={() => navigate(`/edit/${postId}`, { replace: true })}
+          >
+            <FaEdit />
+            수정
+          </EditButton>
+          <DeleteButton onClick={deleteHandler}>
+            <FaTrashAlt />
+            삭제
+          </DeleteButton>
+        </>
       )}
     </>
   );
@@ -66,6 +77,15 @@ const LikeButton = styled(BaseButton)<{ liked: boolean }>`
   border: 1px solid #e5e7eb;
   svg {
     color: ${({ liked }) => (liked ? "#6b7280" : "#e11d48")};
+  }
+`;
+
+const EditButton = styled(BaseButton)`
+  border: 1px solid #e5e7eb;
+  color: #0569d6;
+
+  svg {
+    color: #0569d6;
   }
 `;
 

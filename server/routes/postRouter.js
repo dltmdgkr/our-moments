@@ -76,7 +76,7 @@ postRouter.get("/", async (req, res) => {
       lastId ? { public: true, _id: { $lt: lastId } } : { public: true }
     )
       .sort({ _id: -1 })
-      .limit(20);
+      .limit(12);
 
     res.json(posts);
   } catch (err) {
@@ -97,6 +97,41 @@ postRouter.get("/:postId", async (req, res) => {
     if (!post) throw new Error("해당 게시글은 존재하지 않습니다.");
 
     res.json(post);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+postRouter.post("/:postId", async (req, res) => {
+  try {
+    if (!req.user) throw new Error("권한이 없습니다.");
+    const { postId } = req.params;
+    if (!mongoose.isValidObjectId(req.params.postId))
+      throw new Error("올바르지 않은 postId입니다.");
+
+    const { title, description, location, position, images, public } = req.body;
+
+    const post = await Post.findById(postId);
+    if (!post) throw new Error("게시글을 찾을 수 없습니다.");
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      {
+        title,
+        description,
+        location,
+        position,
+        images: images.map((image) => ({
+          key: image.imageKey,
+          originalFileName: image.originalname,
+        })),
+        public,
+      },
+      { new: true }
+    );
+
+    res.json({ message: "게시글이 수정되었습니다.", post: updatedPost });
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: err.message });

@@ -13,6 +13,7 @@ import { useState } from "react";
 import { MenuModal } from "./components/modal/MenuModal";
 import MomentMarkerProvider from "./context/MomentMarkerProvider";
 import MapMarkerProvider from "./context/MapMarkerProvider";
+import EditPage from "./pages/EditPage";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
@@ -52,6 +53,7 @@ function App() {
             />
             <Route path="/images/:postId" element={<ImageDetailPage />} />
             <Route path="/upload" element={<UploadPage />} />
+            <Route path="/edit/:postId" element={<EditPage />} />
           </Routes>
         </MomentMarkerProvider>
       </MapMarkerProvider>

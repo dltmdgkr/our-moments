@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { PostContext } from "../../context/PostProvider";
+import { usePosts } from "../../context/PostProvider";
 import { AuthContext } from "../../context/AuthProvider";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 
@@ -14,7 +14,7 @@ export default function ImageList() {
     setIsPublic,
     loadMorePosts,
     postLoading,
-  } = useContext(PostContext);
+  } = usePosts();
 
   const handleTogglePublic = () => {
     if (!me) {
@@ -23,18 +23,23 @@ export default function ImageList() {
     }
     setIsPublic((prev) => !prev);
   };
+
   const postList = (isPublic ? posts : myPrivatePosts).map((post, index) => (
     <Card key={`${post._id}-${index}`}>
       <StyledLink to={`/images/${post._id}`}>
-        <StyledImage
-          src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
-          alt="업로드 이미지"
-        />
+        {post.images?.length > 0 && (
+          <StyledImage
+            src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
+            alt="업로드 이미지"
+          />
+        )}
         <Overlay>
           <TopMeta>
             <HiOutlineLocationMarker />
             <LocationText>
-              {post.location.split(" ").slice(0, 3).join(" ")}
+              {post.location
+                ? post.location.split(" ").slice(0, 3).join(" ")
+                : "위치 정보 없음"}
             </LocationText>
           </TopMeta>
           <Title>{post.title || "제목 없음"}</Title>

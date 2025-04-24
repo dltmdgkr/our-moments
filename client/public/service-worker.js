@@ -1,19 +1,21 @@
 const CACHE_NAME = "static-cache-v1";
+
 const PRECACHE_FILES = [
-  "/",
-  "/index.html",
-  "/styles.css",
-  "/main.js",
   "/offline.html",
   "/manifest.json",
   "/favicon.ico",
   "/static/css/main.css",
   "/static/js/main.js",
-  "/static/js/bundle.js",
   "/our_moments-192px.png",
   "/our_moments-512px.png",
-  "current_location_icon.png",
-  "moment_marker.gif",
+];
+
+const NO_CACHE_PATTERNS = [
+  /^\/$/,
+  /^\/gallery(\/.*)?$/,
+  /^\/images\/[^\/]+$/,
+  /^\/users(\/.*)?$/,
+  /^\/images(\/.*)?$/,
 ];
 
 self.addEventListener("install", (event) => {
@@ -42,32 +44,34 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
+  const { request } = event;
+  if (request.method !== "GET") return;
 
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        return (
-          response ||
-          fetch(event.request).catch(() => caches.match("/index.html"))
-        );
-      })
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        return (
-          response ||
-          fetch(event.request)
-            .then((networkResponse) => {
-              return caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-              });
-            })
-            .catch(() => console.log("[ServiceWorker] Network fetch failed"))
-        );
-      })
+  const url = new URL(request.url);
+
+  const shouldBypassCache = NO_CACHE_PATTERNS.some((pattern) =>
+    pattern.test(url.pathname)
+  );
+
+  if (shouldBypassCache) {
+    return event.respondWith(
+      fetch(request).catch(() => caches.match("/offline.html"))
     );
   }
+
+  event.respondWith(
+    caches.match(request).then((response) => {
+      return (
+        response ||
+        fetch(request)
+          .then((networkResponse) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, networkResponse.clone());
+              return networkResponse;
+            });
+          })
+          .catch(() => caches.match("/offline.html"))
+      );
+    })
+  );
 });

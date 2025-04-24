@@ -112,7 +112,7 @@ userRouter.get("/me/images", async (req, res) => {
           }
     )
       .sort({ _id: -1 })
-      .limit(20);
+      .limit(12);
 
     res.json(posts);
   } catch (err) {

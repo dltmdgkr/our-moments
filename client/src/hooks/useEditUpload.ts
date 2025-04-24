@@ -1,44 +1,32 @@
-import { FormEventHandler, useContext, useRef, useState } from "react";
+import { FormEventHandler, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axiosInstance";
 import { usePosts } from "../context/PostProvider";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Place } from "../types/Place";
 import { Preview } from "../components/gallery/UploadContainer";
-import { AuthContext } from "../context/AuthProvider";
+import { Post } from "../types/Post";
 
-interface usePresignedUploadProps {
+interface useEditUploadProps {
+  originalPost: Post | null;
   files: File[] | null;
-  position: { lat: number; lng: number } | null;
-  selectedMarker: Place | null | undefined;
-  setSelectedMarker: (place: Place | null) => void;
   setPreviews: (previews: Preview[]) => void;
 }
 
-export default function usePresignedUpload({
+export default function useEditUpload({
+  originalPost,
   files,
-  position,
-  selectedMarker,
-  setSelectedMarker,
   setPreviews,
-}: usePresignedUploadProps) {
-  const { me } = useContext(AuthContext);
+}: useEditUploadProps) {
   const { setPosts, setMyPrivatePosts } = usePosts();
+  const [title, setTitle] = useState(originalPost?.title);
+  const [description, setDescription] = useState(originalPost?.description);
+  const [isPublic, setIsPublic] = useState(originalPost?.public);
   const [percent, setPercent] = useState<number[]>([]);
-  const [isPublic, setIsPublic] = useState(true);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const navigate = useNavigate();
 
-  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+  const onEditSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (!me) {
-      toast.error("로그인이 필요합니다.", { autoClose: 3000 });
-      return;
-    }
-    if (title.trim() === "" || description.trim() === "") {
+    if (title?.trim() === "" || description?.trim() === "") {
       toast.error("제목과 내용을 입력해주세요.", { autoClose: 3000 });
       return;
     }
@@ -76,16 +64,16 @@ export default function usePresignedUpload({
         })
       );
 
-      const res = await axiosInstance.post("/images", {
+      const res = await axiosInstance.post(`/images/${originalPost?._id}`, {
+        title,
+        description,
+        location: originalPost?.location,
+        position: originalPost?.position,
         images: [...files].map((file, index) => ({
           imageKey: presignedData.data[index].imageKey,
           originalname: file.name,
         })),
         public: isPublic,
-        title,
-        description,
-        location: selectedMarker?.address,
-        position,
       });
 
       if (isPublic) {
@@ -94,24 +82,22 @@ export default function usePresignedUpload({
         setMyPrivatePosts((prevData) => [res.data, ...prevData]);
       }
 
-      toast.success("이미지가 성공적으로 업로드되었습니다.", {
+      toast.success("게시글이 수정되었습니다.", {
         autoClose: 3000,
       });
 
       setTimeout(() => {
-        setSelectedMarker(null);
         setTitle("");
         setDescription("");
         setPercent([]);
         setPreviews([]);
         setIsPublic(true);
         if (inputRef.current) inputRef.current.value = "";
-        navigate("/", { state: { position } });
+        window.location.replace(`/images/${originalPost?._id}`);
       }, 3000);
     } catch (err) {
       console.error(err);
       toast.error("이미지 업로드에 실패했습니다.", { autoClose: 3000 });
-      setSelectedMarker(null);
       setTitle("");
       setDescription("");
       setPercent([]);
@@ -127,7 +113,7 @@ export default function usePresignedUpload({
     percent,
     isPublic,
     inputRef,
-    onSubmit,
+    onEditSubmit,
     setTitle,
     setDescription,
     setIsPublic,

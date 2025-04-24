@@ -1,9 +1,30 @@
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useEffect, useState } from "react";
 import { Preview } from "../components/gallery/UploadContainer";
+import { Post } from "../types/Post";
 
-export default function useImagePreview() {
+export default function useImagePreview(originalPost?: Post | null) {
   const [files, setFiles] = useState<File[] | null>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
+
+  useEffect(() => {
+    if (originalPost) {
+      const existingPreviews = originalPost.images.map((img) => ({
+        imgSrc: `https://in-ourmoments.s3.amazonaws.com/raw/${img.key}`,
+        fileName: img.originalFileName,
+      }));
+      setPreviews(existingPreviews);
+
+      Promise.all(
+        originalPost.images.map(async (img) => {
+          const response = await fetch(
+            `https://in-ourmoments.s3.amazonaws.com/raw/${img.key}`
+          );
+          const blob = await response.blob();
+          return new File([blob], img.originalFileName, { type: blob.type });
+        })
+      ).then(setFiles);
+    }
+  }, [originalPost]);
 
   const imageSelectHandler: ChangeEventHandler<HTMLInputElement> = async (
     e

@@ -12,7 +12,7 @@ interface LikeHandlerProps {
   setHasLiked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface DeleteHandlerProps {
+interface EditAndDeleteHandlerProps {
   postId: string | undefined;
   post: Post;
   setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
@@ -74,7 +74,7 @@ export const deleteHandler = async ({
   setMyPrivatePosts,
   navigate,
   setSelectedMomentMarker,
-}: DeleteHandlerProps) => {
+}: EditAndDeleteHandlerProps) => {
   try {
     if (!window.confirm("정말로 삭제하시겠습니까?")) return;
     const result = await axiosInstance.delete(`/images/${postId}`);

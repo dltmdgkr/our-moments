@@ -68,8 +68,10 @@ const InputGroup = styled.div`
 `;
 
 const Label = styled.label`
+  font-size: 14px;
   font-weight: 600;
   margin-bottom: 8px;
+  color: #333;
 `;
 
 const Input = styled.input`
