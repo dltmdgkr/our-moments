@@ -6,11 +6,11 @@ export default function ImageDetailGallery({ images }: { images: Image[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : prev));
+    setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
   };
 
   const goToSlide = (index: number) => {
@@ -20,30 +20,36 @@ export default function ImageDetailGallery({ images }: { images: Image[] }) {
   return (
     <>
       <Container>
-        <ArrowButton onClick={prevSlide} left>
-          ◀
-        </ArrowButton>
-        <ArrowButton onClick={nextSlide}>▶</ArrowButton>
+        {images.length > 1 && (
+          <>
+            <ArrowButton onClick={prevSlide} left>
+              ◀
+            </ArrowButton>
+            <ArrowButton onClick={nextSlide}>▶</ArrowButton>
+          </>
+        )}
         <Images style={{ transform: `translateX(-${currentIndex * 100}vw)` }}>
           {images.map((image) => (
             <Img key={image._id}>
               <img
                 style={{ width: "100%", height: "100vh", objectFit: "cover" }}
                 src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
-                alt={`image-${image._id}`}
+                alt="갤러리 이미지"
               />
             </Img>
           ))}
         </Images>
-        <IndicatorWrapper>
-          {images.map((_, index) => (
-            <IndicatorButton
-              key={index}
-              active={index === currentIndex}
-              onClick={() => goToSlide(index)}
-            />
-          ))}
-        </IndicatorWrapper>
+        {images.length > 1 && (
+          <IndicatorWrapper>
+            {images.map((_, index) => (
+              <IndicatorButton
+                key={index}
+                active={index === currentIndex}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </IndicatorWrapper>
+        )}
       </Container>
     </>
   );
@@ -70,29 +76,50 @@ const ArrowButton = styled.button<{ left?: boolean }>`
   top: 50%;
   ${(props) => (props.left ? "left: 20px;" : "right: 20px;")}
   transform: translateY(-50%);
-  background: inherit;
+  background-color: rgba(0, 0, 0, 0.6);
   border: none;
   color: white;
-  font-size: 2rem;
-  z-index: 1;
+  font-size: 1.5rem;
+  z-index: 10;
   cursor: pointer;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ${(props) => (props.left ? "padding-right: 10px;" : "padding-left: 10px;")}
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
 `;
 
 const IndicatorWrapper = styled.div`
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 10px;
+  gap: 12px;
 `;
 
 const IndicatorButton = styled.button<{ active: boolean }>`
-  width: 36px;
-  height: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
   border: none;
-  border-radius: 2px;
-  background-color: ${({ active }) => (active ? "white" : "gray")};
-  opacity: 0.8;
+  background-color: ${({ active }) =>
+    active ? "white" : "rgba(255, 255, 255, 0.4)"};
   cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    transform: scale(1.4);
+    background-color: ${({ active }) =>
+      active ? "white" : "rgba(255, 255, 255, 0.8)"};
+  }
 `;

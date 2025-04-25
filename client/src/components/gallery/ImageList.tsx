@@ -28,10 +28,32 @@ export default function ImageList() {
     <Card key={`${post._id}-${index}`}>
       <StyledLink to={`/images/${post._id}`}>
         {post.images?.length > 0 && (
-          <StyledImage
-            src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
-            alt="업로드 이미지"
-          />
+          <>
+            <StyledImage
+              src={`https://in-ourmoments.s3.ap-northeast-2.amazonaws.com/raw/${post.images[0].key}`}
+              alt="업로드 이미지"
+            />
+            {post.images.length > 1 && (
+              <MultipleIconWrapper>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16.014 16.002"
+                >
+                  <path fill="#fff" d="M0 0H12V12H0z" />
+                  <path
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth="2px"
+                    d="M1441-559.716h12.068v-11.669"
+                    transform="translate(-1438.053 574.719)"
+                  />
+                  <path fill="none" d="M0 0H16V16H0z" />
+                </svg>
+              </MultipleIconWrapper>
+            )}
+          </>
         )}
         <Overlay>
           <TopMeta>
@@ -142,6 +164,17 @@ const StyledImage = styled.img`
   width: 100%;
   height: 400px;
   object-fit: cover;
+`;
+
+const MultipleIconWrapper = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px;
+
+  svg {
+    display: block;
+  }
 `;
 
 const Overlay = styled.div`
