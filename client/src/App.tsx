@@ -14,6 +14,8 @@ import MomentMarkerProvider from "./context/MomentMarkerProvider";
 import MapMarkerProvider from "./context/MapMarkerProvider";
 import EditPage from "./pages/EditPage";
 import { MenuModalProvider } from "./context/MenuModalProvider";
+import { ConfirmModalProvider } from "./context/ConfirmModalProvider";
+import { ConfirmModal } from "./components/modal/ConfirmModal";
 
 function App() {
   return (
@@ -21,26 +23,29 @@ function App() {
       <MapMarkerProvider>
         <MomentMarkerProvider>
           <MenuModalProvider>
-            <MenuModal />
-            <ToastContainer />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <KakaoMapScriptLoader>
-                    <DynamicMap>
-                      <MapPage />
-                    </DynamicMap>
-                  </KakaoMapScriptLoader>
-                }
-              />
-              <Route path="/gallery" element={<GalleryPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/images/:postId" element={<ImageDetailPage />} />
-              <Route path="/upload" element={<UploadPage />} />
-              <Route path="/edit/:postId" element={<EditPage />} />
-            </Routes>
+            <ConfirmModalProvider>
+              <MenuModal />
+              <ConfirmModal />
+              <ToastContainer />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <KakaoMapScriptLoader>
+                      <DynamicMap>
+                        <MapPage />
+                      </DynamicMap>
+                    </KakaoMapScriptLoader>
+                  }
+                />
+                <Route path="/gallery" element={<GalleryPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/images/:postId" element={<ImageDetailPage />} />
+                <Route path="/upload" element={<UploadPage />} />
+                <Route path="/edit/:postId" element={<EditPage />} />
+              </Routes>
+            </ConfirmModalProvider>
           </MenuModalProvider>
         </MomentMarkerProvider>
       </MapMarkerProvider>

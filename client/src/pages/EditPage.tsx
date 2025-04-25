@@ -4,9 +4,11 @@ import EditForm from "../components/gallery/EditForm";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
 import { useParams } from "react-router-dom";
+import { useConfirmModal } from "../context/ConfirmModalProvider";
 
 export default function EditPage() {
   const { postId } = useParams();
+  const { openModal } = useConfirmModal();
   const [originalPost, setOriginalPost] = useState(null);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function EditPage() {
   return (
     <PageWrapper>
       <BackButtonWrapper>
-        <BackButton />
+        <BackButton onClick={openModal} />
       </BackButtonWrapper>
       {originalPost && <EditForm originalPost={originalPost} />}
     </PageWrapper>

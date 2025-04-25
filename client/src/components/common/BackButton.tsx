@@ -2,14 +2,22 @@ import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-export default function BackButton() {
+interface BackButtonProps {
+  onClick?: () => void;
+}
+
+export default function BackButton({ onClick }: BackButtonProps) {
   const navigate = useNavigate();
 
-  const onClick = () => {
-    navigate(-1);
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate(-1);
+    }
   };
 
-  return <BackIcon onClick={onClick} />;
+  return <BackIcon onClick={handleClick} />;
 }
 
 const BackIcon = styled(IoArrowBack)`

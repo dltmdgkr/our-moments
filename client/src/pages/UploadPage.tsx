@@ -2,14 +2,16 @@ import styled from "styled-components";
 import BackButton from "../components/common/BackButton";
 import UploadContainer from "../components/gallery/UploadContainer";
 import { useMapMarker } from "../context/MapMarkerProvider";
+import { useConfirmModal } from "../context/ConfirmModalProvider";
 
 export default function UploadPage() {
+  const { openModal } = useConfirmModal();
   const { selectedMarker, setSelectedMarker } = useMapMarker();
 
   return (
     <PageWrapper>
       <BackButtonWrapper>
-        <BackButton />
+        <BackButton onClick={openModal} />
       </BackButtonWrapper>
       <UploadContainer
         selectedMarker={selectedMarker}
