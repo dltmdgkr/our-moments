@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMap } from "./useMap";
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMapMarker } from "../context/MapMarkerProvider";
 import useFetchMoments from "./useFetchMoments";
 import { useMomentMarker } from "../context/MomentMarkerProvider";
@@ -8,8 +8,6 @@ import useMomentMarkersWithClick from "./useMomentMarkersWithClick";
 import useMapClickToAddMarker from "./useMapClickToAddMarker";
 import { extractLatLng } from "../utils/extractLatLng";
 import { moveToCurrentLocation } from "../utils/moveToCurrentLocation";
-import { AuthContext } from "../context/AuthProvider";
-import { toast } from "react-toastify";
 import useSearchedMarker from "./useSearchedMarker";
 
 interface useMapPageLogicProps {
@@ -21,10 +19,10 @@ export default function useMapPageLogic({ setToggle }: useMapPageLogicProps) {
   const navigate = useNavigate();
   const map = useMap();
   const { position } = location.state || {};
-  const { me } = useContext(AuthContext);
   const { selectedMarker, setSelectedMarker } = useMapMarker();
   const { moments } = useFetchMoments();
   const { selectedMomentMarker, setSelectedMomentMarker } = useMomentMarker();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useMomentMarkersWithClick({
     map,
@@ -88,7 +86,7 @@ export default function useMapPageLogic({ setToggle }: useMapPageLogicProps) {
 
   const handleUploadClick = () => {
     if (!selectedPlaceId) {
-      alert("위치를 먼저 선택해주세요!");
+      setIsModalOpen(true);
       return;
     }
     navigate("/upload");
@@ -113,5 +111,7 @@ export default function useMapPageLogic({ setToggle }: useMapPageLogicProps) {
     setSelectedMomentMarker,
     addSearchedMarker,
     searchedPlace,
+    isModalOpen,
+    setIsModalOpen,
   };
 }

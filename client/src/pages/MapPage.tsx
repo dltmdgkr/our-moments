@@ -5,6 +5,7 @@ import BottomCard from "../components/common/BottomCard";
 import styled from "styled-components";
 import MapControls from "../components/map/MapControls";
 import useMapPageLogic from "../hooks/useMapPageLogic";
+import { ConfirmDialog } from "../components/common/ConfirmDialog";
 
 export default function MapPage() {
   const [toggle, setToggle] = useState(false);
@@ -14,10 +15,20 @@ export default function MapPage() {
     handleCurrentLocationClick,
     selectedMomentMarker,
     setSelectedMomentMarker,
+    isModalOpen,
+    setIsModalOpen,
   } = useMapPageLogic({ setToggle });
 
   return (
     <div>
+      <ConfirmDialog
+        isOpen={isModalOpen}
+        title="위치가 지정되지 않았어요!"
+        description="지도를 클릭하거나, 검색창에서 장소를 선택해 위치를 지정해주세요."
+        onConfirm={() => setIsModalOpen(false)}
+        confirmText="확인"
+      />
+
       {!toggle && <HamburgerButton position={"absolute"} />}
       <MapControls
         onSearchToggle={() => setToggle((prev) => !prev)}

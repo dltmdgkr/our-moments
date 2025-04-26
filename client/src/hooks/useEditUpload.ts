@@ -27,11 +27,11 @@ export default function useEditUpload({
   const onEditSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (title?.trim() === "" || description?.trim() === "") {
-      toast.error("제목과 내용을 입력해주세요.", { autoClose: 3000 });
+      toast.error("제목과 내용을 입력해주세요.", { autoClose: 2500 });
       return;
     }
     if (!files || files.length === 0) {
-      toast.error("사진을 업로드 해주세요.", { autoClose: 3000 });
+      toast.error("사진을 업로드 해주세요.", { autoClose: 2500 });
       return;
     }
     try {
@@ -83,7 +83,7 @@ export default function useEditUpload({
       }
 
       toast.success("게시글이 수정되었습니다.", {
-        autoClose: 3000,
+        autoClose: 2500,
       });
 
       setTimeout(() => {
@@ -94,10 +94,10 @@ export default function useEditUpload({
         setIsPublic(true);
         if (inputRef.current) inputRef.current.value = "";
         window.location.replace(`/images/${originalPost?._id}`);
-      }, 3000);
+      }, 2500);
     } catch (err) {
       console.error(err);
-      toast.error("이미지 업로드에 실패했습니다.", { autoClose: 3000 });
+      toast.error("이미지 업로드에 실패했습니다.", { autoClose: 2500 });
       setTitle("");
       setDescription("");
       setPercent([]);

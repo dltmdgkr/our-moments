@@ -36,7 +36,7 @@ export const likeHandler = async ({
   setHasLiked,
 }: LikeHandlerProps) => {
   if (!me) {
-    toast.error("로그인이 필요합니다.", { autoClose: 3000 });
+    toast.error("로그인이 필요합니다.", { autoClose: 2500 });
     return;
   }
 
@@ -76,9 +76,8 @@ export const deleteHandler = async ({
   setSelectedMomentMarker,
 }: EditAndDeleteHandlerProps) => {
   try {
-    if (!window.confirm("정말로 삭제하시겠습니까?")) return;
     const result = await axiosInstance.delete(`/images/${postId}`);
-    toast.success(result.data.message, { autoClose: 3000 });
+    toast.success(result.data.message, { autoClose: 2500 });
 
     if (post?.public) {
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
@@ -89,7 +88,7 @@ export const deleteHandler = async ({
     }
 
     setSelectedMomentMarker(null);
-    navigate("/");
+    navigate(-1);
   } catch (err) {
     if (err instanceof Error) toast.error(err.message);
   }

@@ -16,6 +16,7 @@ import EditPage from "./pages/EditPage";
 import { MenuModalProvider } from "./context/MenuModalProvider";
 import { ConfirmModalProvider } from "./context/ConfirmModalProvider";
 import { ConfirmModal } from "./components/modal/ConfirmModal";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/images/:postId" element={<ImageDetailPage />} />
                 <Route path="/upload" element={<UploadPage />} />
                 <Route path="/edit/:postId" element={<EditPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </ConfirmModalProvider>
           </MenuModalProvider>

@@ -1,6 +1,7 @@
 import { FaHeart, FaRegHeart, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { useConfirmModal } from "../../context/ConfirmModalProvider";
 
 interface PostActionButtonsProps {
   hasLiked: boolean;
@@ -17,6 +18,7 @@ export default function PostActionButtons({
 }: PostActionButtonsProps) {
   const navigate = useNavigate();
   const { postId } = useParams();
+  const { openModal } = useConfirmModal();
   return (
     <>
       <LikeButton onClick={likeHandler} liked={hasLiked}>
@@ -31,7 +33,17 @@ export default function PostActionButtons({
             <FaEdit />
             수정
           </EditButton>
-          <DeleteButton onClick={deleteHandler}>
+          <DeleteButton
+            onClick={() =>
+              openModal({
+                title: "삭제하시겠습니까?",
+                description: "삭제된 글은 복구할 수 없습니다.",
+                confirmText: "삭제하기",
+                cancelText: "취소",
+                onConfirm: deleteHandler,
+              })
+            }
+          >
             <FaTrashAlt />
             삭제
           </DeleteButton>

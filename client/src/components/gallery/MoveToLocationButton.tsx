@@ -18,7 +18,7 @@ export default function MoveToLocationButton({
 }: MoveToLocationButtonProps) {
   const moveToLocation = () => {
     if (!position) {
-      toast.error("위치 정보를 찾을 수 없습니다.", { autoClose: 3000 });
+      toast.error("위치 정보를 찾을 수 없습니다.", { autoClose: 2500 });
       return;
     }
 

@@ -6,7 +6,9 @@ interface ConfirmDialogProps {
   title: string;
   description?: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 export const ConfirmDialog = ({
@@ -15,16 +17,23 @@ export const ConfirmDialog = ({
   description,
   onConfirm,
   onCancel,
+  confirmText = "종료하기",
+  cancelText = "계속 작성",
 }: ConfirmDialogProps) => {
   useEffect(() => {
     if (isOpen) {
+      const scrollBarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
+      document.body.style.marginRight = `${scrollBarWidth}px`;
     } else {
       document.body.style.overflow = "unset";
+      document.body.style.marginRight = "0";
     }
 
     return () => {
       document.body.style.overflow = "unset";
+      document.body.style.marginRight = "0";
     };
   }, [isOpen]);
 
@@ -36,8 +45,10 @@ export const ConfirmDialog = ({
         <Title>{title}</Title>
         {description && <Description>{description}</Description>}
         <ButtonGroup>
-          <CancelButton onClick={onCancel}>계속하기</CancelButton>
-          <ConfirmButton onClick={onConfirm}>종료하기</ConfirmButton>
+          {onCancel && cancelText && (
+            <CancelButton onClick={onCancel}>{cancelText}</CancelButton>
+          )}
+          <ConfirmButton onClick={onConfirm}>{confirmText}</ConfirmButton>
         </ButtonGroup>
       </Dialog>
     </Overlay>

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { usePosts } from "../context/PostProvider";
 import { axiosInstance } from "../utils/axiosInstance";
-import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthProvider";
 import { Post } from "../types/Post";
 
@@ -23,7 +22,7 @@ export default function useImageDetail(postId: string | undefined) {
     axiosInstance
       .get(`/images/${postId}`)
       .then((result) => setPost(result.data))
-      .catch((err) => toast.error(err.response.data.message));
+      .catch((err) => err.response?.data?.message);
   }, [postId, post]);
 
   useEffect(() => {

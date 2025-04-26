@@ -1,23 +1,34 @@
 import styled from "styled-components";
 import BackButton from "../components/common/BackButton";
 import EditForm from "../components/gallery/EditForm";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useConfirmModal } from "../context/ConfirmModalProvider";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function EditPage() {
   const { postId } = useParams();
+  const { me } = useContext(AuthContext);
   const { openModal } = useConfirmModal();
+  const navigate = useNavigate();
   const [originalPost, setOriginalPost] = useState(null);
 
   useEffect(() => {
     const fetchPostData = async () => {
       try {
         const res = await axiosInstance.get(`/images/${postId}`);
-        setOriginalPost(res.data);
+        const post = res.data;
+
+        if (!me) {
+          navigate("/");
+          return;
+        }
+
+        setOriginalPost(post);
       } catch (err) {
         console.error("게시글 불러오기 실패:", err);
+        navigate("/");
       }
     };
 
@@ -27,7 +38,15 @@ export default function EditPage() {
   return (
     <PageWrapper>
       <BackButtonWrapper>
-        <BackButton onClick={openModal} />
+        <BackButton
+          onClick={() =>
+            openModal({
+              title: "작성을 종료하시겠습니까?",
+              description: "작성 중이신 내용은 삭제됩니다.",
+              onConfirm: () => navigate(-1),
+            })
+          }
+        />
       </BackButtonWrapper>
       {originalPost && <EditForm originalPost={originalPost} />}
     </PageWrapper>

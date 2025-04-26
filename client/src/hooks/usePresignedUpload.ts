@@ -35,15 +35,15 @@ export default function usePresignedUpload({
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (!me) {
-      toast.error("로그인이 필요합니다.", { autoClose: 3000 });
+      toast.error("로그인이 필요합니다.", { autoClose: 2500 });
       return;
     }
     if (title.trim() === "" || description.trim() === "") {
-      toast.error("제목과 내용을 입력해주세요.", { autoClose: 3000 });
+      toast.error("제목과 내용을 입력해주세요.", { autoClose: 2500 });
       return;
     }
     if (!files || files.length === 0) {
-      toast.error("사진을 업로드 해주세요.", { autoClose: 3000 });
+      toast.error("사진을 업로드 해주세요.", { autoClose: 2500 });
       return;
     }
     try {
@@ -95,7 +95,7 @@ export default function usePresignedUpload({
       }
 
       toast.success("이미지가 성공적으로 업로드되었습니다.", {
-        autoClose: 3000,
+        autoClose: 2500,
       });
 
       setTimeout(() => {
@@ -107,10 +107,10 @@ export default function usePresignedUpload({
         setIsPublic(true);
         if (inputRef.current) inputRef.current.value = "";
         navigate("/", { state: { position } });
-      }, 3000);
+      }, 2500);
     } catch (err) {
       console.error(err);
-      toast.error("이미지 업로드에 실패했습니다.", { autoClose: 3000 });
+      toast.error("이미지 업로드에 실패했습니다.", { autoClose: 2500 });
       setSelectedMarker(null);
       setTitle("");
       setDescription("");

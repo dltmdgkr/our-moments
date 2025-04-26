@@ -1,28 +1,21 @@
-const CACHE_NAME = "static-cache-v2";
-
+const CACHE_NAME = "static-cache-v3";
 const PRECACHE_FILES = [
-  "/offline.html",
+  "/",
+  "/index.html",
+  "/styles.css",
+  "/main.js",
   "/manifest.json",
   "/favicon.ico",
   "/static/css/main.css",
   "/static/js/main.js",
+  "/static/js/bundle.js",
   "/our_moments-192px.png",
   "/our_moments-512px.png",
 ];
 
-const NO_CACHE_PATTERNS = [
-  /^\/$/,
-  /^\/gallery(\/.*)?$/,
-  /^\/images\/[^\/]+$/,
-  /^\/users(\/.*)?$/,
-  /^\/images(\/.*)?$/,
-];
-
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_FILES);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_FILES))
   );
   self.skipWaiting();
 });
@@ -45,18 +38,26 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-  if (request.method !== "GET") return;
-
   const url = new URL(request.url);
 
-  const shouldBypassCache = NO_CACHE_PATTERNS.some((pattern) =>
-    pattern.test(url.pathname)
-  );
+  if (request.method !== "GET") {
+    return;
+  }
 
-  if (shouldBypassCache) {
-    return event.respondWith(
-      fetch(request).catch(() => caches.match("/offline.html"))
+  if (url.pathname.startsWith("/images") || url.pathname.startsWith("/users")) {
+    event.respondWith(fetch(request).catch(() => caches.match("/index.html")));
+    return;
+  }
+
+  if (request.mode === "navigate") {
+    event.respondWith(
+      caches.match("/index.html").then((cachedPage) => {
+        return (
+          cachedPage || fetch(request).catch(() => caches.match("/index.html"))
+        );
+      })
     );
+    return;
   }
 
   event.respondWith(
@@ -70,7 +71,7 @@ self.addEventListener("fetch", (event) => {
               return networkResponse;
             });
           })
-          .catch(() => caches.match("/offline.html"))
+          .catch(() => caches.match("/index.html"))
       );
     })
   );

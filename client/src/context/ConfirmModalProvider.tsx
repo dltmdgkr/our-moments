@@ -1,21 +1,43 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-interface ModalContextType {
+interface ConfirmModalProps {
   isOpen: boolean;
-  openModal: () => void;
+  title: string;
+  description?: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  confirmText?: string;
+  cancelText?: string;
+}
+interface ConfirmModalContextType {
+  openModal: (props: Omit<ConfirmModalProps, "isOpen">) => void;
   closeModal: () => void;
+  state: ConfirmModalProps;
 }
 
-const ConfirmModalContext = createContext<ModalContextType | null>(null);
+const ConfirmModalContext = createContext<ConfirmModalContextType | null>(null);
+
+const initialState: ConfirmModalProps = {
+  isOpen: false,
+  title: "",
+  description: "",
+  onConfirm: () => {},
+  onCancel: () => {},
+};
 
 export const ConfirmModalProvider = ({ children }: { children: ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [state, setState] = useState<ConfirmModalProps>(initialState);
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const openModal = (props: Omit<ConfirmModalProps, "isOpen">) => {
+    setState({ isOpen: true, ...props });
+  };
+
+  const closeModal = () => {
+    setState((prev) => ({ ...prev, isOpen: false }));
+  };
 
   return (
-    <ConfirmModalContext.Provider value={{ isOpen, openModal, closeModal }}>
+    <ConfirmModalContext.Provider value={{ state, openModal, closeModal }}>
       {children}
     </ConfirmModalContext.Provider>
   );

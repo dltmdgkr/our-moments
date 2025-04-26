@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { usePosts } from "../../context/PostProvider";
 import { AuthContext } from "../../context/AuthProvider";
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import { toast } from "react-toastify";
 
 export default function ImageList() {
   const { me } = useContext(AuthContext);
@@ -18,7 +19,7 @@ export default function ImageList() {
 
   const handleTogglePublic = () => {
     if (!me) {
-      alert("로그인 후 이용해주세요!");
+      toast.error("로그인 후 이용해주세요.", { autoClose: 2500 });
       return;
     }
     setIsPublic((prev) => !prev);
