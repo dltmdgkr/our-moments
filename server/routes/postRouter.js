@@ -67,16 +67,23 @@ postRouter.post("/", async (req, res) => {
 
 postRouter.get("/", async (req, res) => {
   try {
-    const { lastId } = req.query;
+    const { lastId, all } = req.query;
 
     if (lastId && !mongoose.isValidObjectId(lastId))
       throw new Error("invalid lastId");
 
-    const posts = await Post.find(
-      lastId ? { public: true, _id: { $lt: lastId } } : { public: true }
-    )
-      .sort({ _id: -1 })
-      .limit(12);
+    let query = { public: true };
+    if (lastId) {
+      query = { ...query, _id: { $lt: lastId } };
+    }
+
+    let postsQuery = Post.find(query).sort({ _id: -1 });
+
+    if (!all) {
+      postsQuery = postsQuery.limit(12);
+    }
+
+    const posts = await postsQuery;
 
     res.json(posts);
   } catch (err) {

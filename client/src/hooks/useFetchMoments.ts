@@ -8,7 +8,7 @@ export default function useFetchMoments() {
   useEffect(() => {
     const fetchMoments = async () => {
       try {
-        const res = await axiosInstance.get("/images");
+        const res = await axiosInstance.get("/images?all=true");
 
         if (Array.isArray(res.data)) {
           setMoments(res.data);

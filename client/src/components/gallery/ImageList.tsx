@@ -188,6 +188,8 @@ const Overlay = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  box-sizing: border-box;
+  word-break: break-word;
 `;
 
 const TopMeta = styled.div`
@@ -211,12 +213,16 @@ const Title = styled.h4`
   font-size: 18px;
   font-weight: bold;
   margin: 0 0 4px 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 `;
 
 const Description = styled.p`
   font-size: 13px;
   color: #ccc;
   margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 `;
 
 const LoadMoreButton = styled.button`
