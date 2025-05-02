@@ -12,7 +12,7 @@ export const getAndMarkUserLocation = (map: kakao.maps.Map | null) => {
         const userPosition = new kakao.maps.LatLng(latitude, longitude);
 
         if (map) {
-          const imageSrc = "/current_location_icon.png";
+          const imageSrc = "/current_location_icon.webp";
           const imageSize = new kakao.maps.Size(32, 32);
           const imageOption = { offset: new kakao.maps.Point(10, 10) };
 
